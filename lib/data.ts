@@ -34,17 +34,17 @@ export const links = [
 
 export const experiencesData = [
   {
-    title: "Junior dev - Robotter",
+    title: "robotter.ai & aleph.im",
     location: "",
     description:
-      "I participated in the aleph indexer framework, building some indexers and a code generator as a developer productivity tool.",
+      "I made contributions to Fishnet monetization system and the aleph indexer framework.",
     icon: React.createElement(CgWorkAlt),
-    date: "2021 - 2022",
+    date: "2022 - 2023",
   },
   {
-    title: "Double degree in IT and Business Management",
+    title: "Degree in CS and BM",
     location: "Alicante, Spain",
-    description: "Has been a rich learning experience, cultivating my interdisciplinary skills and discipline for the future.",
+    description: "Studying two careers and trying to be an entrepreneur at the same time has been difficult but it has forged me.",
     icon: React.createElement(LuGraduationCap),
     date: "2023",
   },
@@ -54,7 +54,7 @@ export const experiencesData = [
     description:
       "I'm now a full-stack developer working as a freelancer. I'm open to part-time opportunities.",
     icon: React.createElement(FaReact),
-    date: "2021 - present",
+    date: "present",
   },
 ] as const;
 
@@ -62,9 +62,10 @@ export const projectsData = [
   {
     title: "Brick Protocol",
     description:
-      "Solana payment gateway, built a Solana program and server for webhook responses and transaction server builder.",
+      "Solana payment gateway, a Solana program, and a server for webhook responses and transaction handling",
     tags: ["Solana", "Rust", "Bun", "Firebase", "Helius"],
     imageUrl: brickProtocol,
+    url: "https://www.brickprotocol.xyz/"
   },
   {
     title: "Own Blog",
@@ -72,13 +73,14 @@ export const projectsData = [
       "Solana monetizable article platform, using aleph as a database. Presented this project as my final thesis at university.",
     tags: ["React", "TypeScript", "Next.js", "Aleph", "Tailwind"],
     imageUrl: ownBlog,
+    url: "https://www.ownblog.xyz/"
   }
 ] as const;
 
 export const skillsData = [
-  "HTML",
-  "CSS",
-  "JavaScript",
+  "Solana",
+  "Anchor",
+  "Rust",
   "TypeScript",
   "React",
   "Next.js",
@@ -86,7 +88,7 @@ export const skillsData = [
   "Bun.js",
   "Git",
   "Tailwind",
-  "MongoDB",
+  "Firebase",
   "Redux",
   "GraphQL",
   "Express",
