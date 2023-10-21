@@ -18,20 +18,28 @@ export default function Intro() {
       id="home"
       className="mb-28 max-w-[50rem] text-center sm:mb-40 scroll-mt-[100rem]"
     >
-      <div className="flex items-center justify-center">
-        <div className="flex flex-row items-center justify-center gap-2 px-4 pb-5 text-lg font-medium">
-          <div>
-            <motion.h1
-              className="mb-10 mt-8 px-4 !leading-[1.5] text-lg md:text-2xl"
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <span className="font-bold">Hello, I'm Ricardo.</span> I'm a{" "}
-              <span className="font-bold">full-stack developer</span> with{" "}
-              <span className="font-bold">2 years</span> of experience, currently 
-              living in Spain. I specialize in building on Solana.
-            </motion.h1>
-          </div>
+      <div className="flex flex-col md:flex-row items-center justify-center">
+        <motion.div className="w-full md:w-3/4">
+          <motion.h1
+            className="mb-4 md:mb-10 mt-8 px-4 !leading-[1.5] text-lg md:text-2xl"
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <span className="font-bold">Hello, I'm Ricardo.</span> I'm a{" "}
+            <span className="font-bold">full-stack developer</span> with{" "}
+            <span className="font-bold">2 years</span> of experience, currently 
+            living in Spain. I specialize in building on Solana.
+          </motion.h1>
+        </motion.div>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            type: "tween",
+            duration: 0.2,
+          }}
+          className="w-1/2 md:w-1/4 flex items-center justify-center order-first md:order-last"
+        >
           <Image
             src="/pfpHacker.png"
             alt="Ricardo builder mode"
@@ -39,11 +47,10 @@ export default function Intro() {
             height="192"
             quality="95"
             priority={true}
-            className="h-52 w-52 rounded-lg object-cover clip-y-1"
+            className="h-52 w-52 rounded-lg object-cover"
           />
-        </div>
+        </motion.div>
       </div>
-    
       <motion.div
         className="flex flex-row items-center justify-center gap-2 px-4 text-lg font-medium"
         initial={{ opacity: 0, y: 100 }}
