@@ -22,7 +22,7 @@ export default function Intro() {
         <div className="flex flex-row items-center justify-center gap-2 px-4 pb-5 text-lg font-medium">
           <div>
             <motion.h1
-              className="mb-10 mt-8 px-4 font-medium !leading-[1.5] text-2xl"
+              className="mb-10 mt-8 px-4 !leading-[1.5] text-lg md:text-2xl"
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
             >
