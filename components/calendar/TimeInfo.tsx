@@ -56,7 +56,7 @@ const TimeInfo = ({
                         {availableHours.map((hour, index) => (
                         <li
                             key={`hour-${index}`}
-                            className={`rounded-lg py-1 cursor-pointer hover: text-gray-800 dark:text-gray-100 ${
+                            className={`rounded-lg py-1 cursor-pointer border-gray-800 border text-gray-800 dark:text-gray-100 ${
                                 date.hours.includes(hour)
                                     ? 'bg-blue-500'
                                     : 'bg-green-500'
