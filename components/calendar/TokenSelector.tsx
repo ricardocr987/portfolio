@@ -25,7 +25,7 @@ const TokenSelector = ({ setSelectedToken, selectedToken, tokenList, hours }: Pr
         <div ref={tokenForm} className="cursor-pointer">
             <button 
                 onClick={() => setIsOpen(!isOpen)} 
-                className='border-gray-800 border bg-gray-500 rounded-md h-12 w-24'
+                className='border-gray-800 border bg-orange-500 hover:bg-orange-400 rounded-md h-12 w-24'
             >
                 <div className="flex items-center px-1 space-x-1">
                     <span className="text-gray-800 dark:text-gray-100 px-2">
@@ -47,11 +47,11 @@ const TokenSelector = ({ setSelectedToken, selectedToken, tokenList, hours }: Pr
                 </div>
             </button>
             {isOpen && (
-                <ul className="border-gray-800 border bg-gray-500 absolute rounded-md shadow-md w-24">
+                <ul className="border-gray-800 border bg-orange-400 absolute rounded-md shadow-md w-24">
                     {tokenList.map((token) => (
                         <li
                             key={token.symbol}
-                            className="border-gray-800 flex justify-center space-x-1 hover:bg-gray-400"
+                            className="border-gray-800 flex justify-center space-x-1 rounded-md  hover:bg-orange-300"
                             onClick={() => handleItemClick(token)}
                         >
                             <span className="px-2 py-2 truncate">{token.price}</span>

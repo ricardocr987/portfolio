@@ -25,22 +25,22 @@ const Calendar = ({initialDate, availableHours}: CalendarProps) => {
 
     return (
         <div className="md:flex p-8 w-96">
-          <table className="w-full">
-            <thead>
-              <tr>
-                <th colSpan={7}>
-                  <CalendarHeader date={date} setDate={setDate} />
-                </th>
-              </tr>
-            </thead>
-            <thead>
-              <DayNames />
-            </thead>
-            <tbody>
-              <CalendarContent date={date} setDate={setDate} />
-            </tbody>
-          </table>
-          <TimeInfo
+            <table className="w-full h-74">
+                <thead>
+                    <tr>
+                        <th colSpan={7}>
+                            <CalendarHeader date={date} setDate={setDate} />
+                        </th>
+                    </tr>
+                </thead>
+                <thead>
+                    <DayNames />
+                </thead>
+                <tbody>
+                    <CalendarContent date={date} setDate={setDate} />
+                </tbody>
+            </table>
+        <TimeInfo
             date={date}
             setDate={setDate}
             availableHours={availableHours}

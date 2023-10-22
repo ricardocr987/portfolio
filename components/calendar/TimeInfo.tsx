@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
-import PaymentComponent from "./PaymentComponent";
 import { DateProps, TokenInfo } from "@/app/meeting/types";
+import TokenSelector from "./TokenSelector";
 
 type TimeInfoProps = {
     date: DateProps;
@@ -19,6 +19,10 @@ const TimeInfo = ({
     setSelectedToken,
     tokenList,
 }: TimeInfoProps) => {
+    const handlePayment = () => {
+
+    }
+
     const handleSelectedHour = (hour: number) => {
         if (date.hours.includes(hour)) {
             setDate({ ...date, hours: date.hours.filter((selectedHour) => selectedHour !== hour) });
@@ -35,45 +39,55 @@ const TimeInfo = ({
 
     return (
         <div className="py-5 px-5 w-full">
-        {availableHours.length === 0 ? (
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center">
-                No available hour slots
-            </h2>
-        ) : !date.day ? (
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center">
-                Select day to check available hours
-            </h2>
-        ) : (
-            <div>
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                Available Time
-            </h2>
-            <ul className="mt-2 space-y-2 text-center">
-                {availableHours.map((hour, index) => (
-                <li
-                    key={`hour-${index}`}
-                    className={`px-4 py-2 rounded-lg cursor-pointer text-white ${
-                    date.hours.includes(hour)
-                        ? 'bg-blue-600 hover:bg-blue-700'
-                        : 'bg-green-600 hover:bg-green-700'
-                    }`}
-                    onClick={() => handleSelectedHour(hour)}
-                >
-                    {date.hours.includes(hour)
-                        ? `Selected ${formatTime(hour)}`
-                        : `Select ${formatTime(hour)}`
-                    }
-                </li>
-                ))}
-            </ul>
-            <PaymentComponent
-                setSelectedToken={setSelectedToken}
-                selectedToken={selectedToken}
-                tokenList={tokenList}
-                hours={date.hours.length}
-            />
-            </div>
-        )}
+            {availableHours.length === 0 ? (
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center w-48 mx-auto block">
+                    No available hour slots
+                </h2>
+            ) : !date.day ? (
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center w-48 mx-auto block">
+                        Select day to check available hours
+                    </h2>
+            ) : (
+                <div>
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                        Available Time
+                    </h2>
+                    <ul className="mt-2 space-y-2 text-center">
+                        {availableHours.map((hour, index) => (
+                        <li
+                            key={`hour-${index}`}
+                            className={`rounded-lg py-1 cursor-pointer hover: text-gray-800 dark:text-gray-100 ${
+                                date.hours.includes(hour)
+                                    ? 'bg-blue-500'
+                                    : 'bg-green-500'
+                            }`}
+                            onClick={() => handleSelectedHour(hour)}
+                        >
+                            {date.hours.includes(hour)
+                                ? `Selected ${formatTime(hour)}`
+                                : `Select ${formatTime(hour)}`
+                            }
+                        </li>
+                        ))}
+                    </ul>
+                    <div className="flex justify-center py-2 ">
+                        <div className="flex w-48 h-14 py-2">
+                            <TokenSelector
+                                setSelectedToken={setSelectedToken} 
+                                selectedToken={selectedToken}
+                                tokenList={tokenList}
+                                hours={date.hours.length}
+                            />
+                            <button 
+                                className="border-gray-800 border bg-orange-500 hover:bg-orange-400 rounded-md text-center py-2 cursor-pointer h-12 w-24"
+                                onClick={handlePayment}
+                            >
+                                Pay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
