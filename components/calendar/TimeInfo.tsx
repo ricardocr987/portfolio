@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { DateProps, TokenInfo } from "@/app/meeting/types";
-import TokenSelector from "./TokenSelector";
+import PaymentComponent from "./PaymentComponent";
 
 type TimeInfoProps = {
     date: DateProps;
@@ -19,10 +19,6 @@ const TimeInfo = ({
     setSelectedToken,
     tokenList,
 }: TimeInfoProps) => {
-    const handlePayment = () => {
-
-    }
-
     const handleSelectedHour = (hour: number) => {
         if (date.hours.includes(hour)) {
             setDate({ ...date, hours: date.hours.filter((selectedHour) => selectedHour !== hour) });
@@ -38,7 +34,7 @@ const TimeInfo = ({
     };
 
     return (
-        <div className="py-5 px-5 w-full">
+        <div className="py-5 w-64">
             {availableHours.length === 0 ? (
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center w-48 mx-auto block">
                     No available hour slots
@@ -52,7 +48,7 @@ const TimeInfo = ({
                     <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                         Available Time
                     </h2>
-                    <ul className="mt-2 space-y-2 text-center">
+                    <ul className="mt-2 space-y-2 text-center w-full">
                         {availableHours.map((hour, index) => (
                         <li
                             key={`hour-${index}`}
@@ -70,22 +66,12 @@ const TimeInfo = ({
                         </li>
                         ))}
                     </ul>
-                    <div className="flex justify-center py-2 ">
-                        <div className="flex w-48 h-14 py-2">
-                            <TokenSelector
-                                setSelectedToken={setSelectedToken} 
-                                selectedToken={selectedToken}
-                                tokenList={tokenList}
-                                hours={date.hours.length}
-                            />
-                            <button 
-                                className="border-gray-800 border bg-orange-500 hover:bg-orange-400 rounded-md text-center py-2 cursor-pointer h-12 w-24"
-                                onClick={handlePayment}
-                            >
-                                Pay
-                            </button>
-                        </div>
-                    </div>
+                    <PaymentComponent 
+                        setSelectedToken={setSelectedToken} 
+                        selectedToken={selectedToken}
+                        tokenList={tokenList}
+                        hours={date.hours.length}
+                    />
                 </div>
             )}
         </div>
