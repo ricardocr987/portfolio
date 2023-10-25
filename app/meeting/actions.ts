@@ -16,7 +16,7 @@ export const checkout = async (quantity: number) => {
             },
         ],
         success_url: `${config.APP_URL}/success`,
-        cancel_url: `${config.APP_URL}/pricing`,
+        cancel_url: `${config.APP_URL}/meeting`,
     });
 
     if (session.url) {
