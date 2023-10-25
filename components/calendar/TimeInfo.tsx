@@ -58,8 +58,8 @@ const TimeInfo = ({
                                 onClick={() => handleSelectedTime(slot)}
                             >
                                 {date.hours.includes(slot)
-                                    ? `Selected ${slot}`
-                                    : `Select ${slot}`
+                                    ? `Selected ${slot} CEST`
+                                    : `Select ${slot} CEST`
                                 }
                             </li>
                         ))}
