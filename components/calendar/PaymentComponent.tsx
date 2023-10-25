@@ -59,7 +59,7 @@ const PaymentComponent = ({ setSelectedToken, selectedToken, tokenList, hours }:
     return (
         <div className="flex flex-col mt-2">
             <h2 className="text-lg font-semibold mb-2 mt-2">
-                Price: 50 €/h
+                Price: 20 €/slot
             </h2>
             {paymentMode === 'solana' && (
                 <CryptoPayment

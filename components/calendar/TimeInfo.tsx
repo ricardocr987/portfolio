@@ -2,10 +2,14 @@ import { Dispatch, SetStateAction } from "react";
 import { DateProps, TokenInfo } from "@/app/meeting/types";
 import PaymentComponent from "./PaymentComponent";
 
+type TimeInfo = {
+    hour: number
+    minute: number
+}
 type TimeInfoProps = {
     date: DateProps;
     setDate: Dispatch<SetStateAction<DateProps>>;
-    availableHours: number[];
+    availableSlots: string[];
     selectedToken: TokenInfo;
     setSelectedToken: Dispatch<SetStateAction<TokenInfo>>;
     tokenList: TokenInfo[];
@@ -14,28 +18,22 @@ type TimeInfoProps = {
 const TimeInfo = ({
     date,
     setDate,
-    availableHours,
+    availableSlots,
     selectedToken,
     setSelectedToken,
     tokenList,
 }: TimeInfoProps) => {
-    const handleSelectedHour = (hour: number) => {
-        if (date.hours.includes(hour)) {
-            setDate({ ...date, hours: date.hours.filter((selectedHour) => selectedHour !== hour) });
+    const handleSelectedTime = (slot: string) => {
+        if (date.hours.includes(slot)) {
+            setDate({ ...date, hours: date.hours.filter((selectedTime) => selectedTime !== slot) });
         } else {
-            setDate({ ...date, hours: [...date.hours, hour] });
+            setDate({ ...date, hours: [...date.hours, slot] });
         }
-    };
-
-    const formatTime = (hour: number) => {
-        const formattedHour = hour < 10 ? `0${hour}` : `${hour}`;
-        const period = hour <= 12 ? "AM" : "PM";
-        return `${formattedHour}:00 ${period}`;
     };
 
     return (
         <div className="py-5 w-64">
-            {availableHours.length === 0 ? (
+            {availableSlots.length === 0 ? (
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center w-48 mx-auto block">
                     No available hour slots
                 </h2>
@@ -49,21 +47,21 @@ const TimeInfo = ({
                         Available Time
                     </h2>
                     <ul className="mt-2 space-y-2 text-center w-full">
-                        {availableHours.map((hour, index) => (
-                        <li
-                            key={`hour-${index}`}
-                            className={`rounded-lg py-1 cursor-pointer border-gray-800 border text-gray-800 dark:text-gray-100 ${
-                                date.hours.includes(hour)
-                                    ? 'bg-blue-500'
-                                    : 'bg-green-500'
-                            }`}
-                            onClick={() => handleSelectedHour(hour)}
-                        >
-                            {date.hours.includes(hour)
-                                ? `Selected ${formatTime(hour)}`
-                                : `Select ${formatTime(hour)}`
-                            }
-                        </li>
+                        {availableSlots.map((slot, index) => (
+                            <li
+                                key={`hour-${index}`}
+                                className={`rounded-lg py-1 cursor-pointer border-gray-800 border text-gray-800 dark:text-gray-100 ${
+                                    date.hours.includes(slot)
+                                        ? 'bg-blue-500'
+                                        : 'bg-green-500'
+                                }`}
+                                onClick={() => handleSelectedTime(slot)}
+                            >
+                                {date.hours.includes(slot)
+                                    ? `Selected ${slot}`
+                                    : `Select ${slot}`
+                                }
+                            </li>
                         ))}
                     </ul>
                     <PaymentComponent 

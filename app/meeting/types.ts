@@ -2,7 +2,7 @@ export type DateProps = {
     year: number
     month: number
     day?: number
-    hours: number[]
+    hours: string[]
 }
 
 export type TokenInfo = {
@@ -19,6 +19,6 @@ export type PricesMap = {
 
 export type MeetingProps = {
     initialDate: DateProps
-    availableHours: number[]
+    availableSlots: string[]
     prices: PricesMap
 }

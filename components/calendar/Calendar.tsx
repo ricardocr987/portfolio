@@ -16,11 +16,11 @@ type PricesMap = {
 
 type CalendarProps = {
     initialDate: DateProps
-    availableHours: number[]
+    availableSlots: string[]
     prices: PricesMap
 }
 
-const Calendar = ({initialDate, availableHours, prices}: CalendarProps) => {
+const Calendar = ({initialDate, availableSlots, prices}: CalendarProps) => {
   const [selectedToken, setSelectedToken] = useState<TokenInfo>(
       changeTokenInfo('USDC', prices.USDC)
   );
@@ -65,7 +65,7 @@ const Calendar = ({initialDate, availableHours, prices}: CalendarProps) => {
       <TimeInfo
         date={date}
         setDate={setDate}
-        availableHours={availableHours}
+        availableSlots={availableSlots}
         selectedToken={selectedToken}
         setSelectedToken={setSelectedToken}
         tokenList={tokenList}

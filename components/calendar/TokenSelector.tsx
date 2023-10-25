@@ -27,7 +27,7 @@ const TokenSelector = ({ setSelectedToken, selectedToken, tokenList, hours }: Pr
                 className="border-gray-800 border bg-orange-500 hover:bg-orange-400 rounded-md h-12 w-full flex items-center justify-between"
             >
                 <span className="text-gray-800 dark:text-gray-100 ml-4">
-                    {selectedToken.price * hours}
+                    {(selectedToken.price * hours).toFixed(2)}
                 </span>
                 <div className="ml-4">
                     <Image

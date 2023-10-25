@@ -8,22 +8,22 @@ async function fetchPrice(toCurrency: string, fromCurrency = 'EUROe') {
         if (!response.ok) {
             throw new Error(`Failed to fetch data: ${response.status} - ${response.statusText}`);
         }
-    
+
         const data = await response.json();
         const tokenData = data.data[fromCurrency];
         const conversionRate = tokenData.price;
-    
-        const multiplier = 10 ** 2;
+
+        const multiplier = 100;
         const truncatedRate = Math.floor(conversionRate * multiplier) / multiplier;
 
         return truncatedRate;
     } catch (error) {
-         throw new Error(`Error fetching conversion rate`);
+        throw new Error(`Error fetching conversion rate`);
     }
 }
 
 async function getInitialProps(): Promise<MeetingProps> {
-    const availableHours: number[] = [16, 17];
+    const availableSlots: string[] = ['17:00', '17:15', '17:30', '17:45'];
     const currentDate = new Date();
     const initialDate: DateProps = {
         year: currentDate.getFullYear(),
@@ -32,33 +32,34 @@ async function getInitialProps(): Promise<MeetingProps> {
         hours: [],
     };
 
+    const euroPrice = 20;
     const [solPrice, usdcPrice] = await Promise.all([
-        fetchPrice('SOL').then(price => price * 50),
-        fetchPrice('USDC').then(price => price * 50),
+        fetchPrice('SOL').then(price => price * euroPrice),
+        fetchPrice('USDC').then(price => price * euroPrice),
     ]);
 
     const prices: PricesMap = {
-        EUR: 50,
-        SOL: solPrice,
-        USDC: usdcPrice
+        EUR: euroPrice,
+        SOL: parseFloat(solPrice.toFixed(2)),
+        USDC: parseFloat(usdcPrice.toFixed(2)),
     };
 
     return {
         initialDate,
-        availableHours,
+        availableSlots,
         prices,
     };
 }
 
 
 export default async function Page() {
-    const { initialDate, availableHours, prices } = await getInitialProps()
+    const { initialDate, availableSlots, prices } = await getInitialProps()
 
     return (
         <main className="flex md:flex-col items-center justify-center">
             <Calendar 
                 initialDate={initialDate} 
-                availableHours={availableHours} 
+                availableSlots={availableSlots} 
                 prices={prices}
             />
         </main>
