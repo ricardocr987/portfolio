@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react"
-import { TokenInfo } from "@/app/meeting/types"
+import { DateProps, TokenInfo } from "@/app/meeting/types"
 import CryptoPayment from "./CryptoPayment"
 import { checkout } from "@/app/meeting/actions";
 import toast from "react-hot-toast";
@@ -8,19 +8,21 @@ type PriceComponentProps = {
     selectedToken: TokenInfo
     setSelectedToken: Dispatch<SetStateAction<TokenInfo>>
     tokenList: TokenInfo[]
-    hours: number
+    date: DateProps
+    customerEmail: string
+    message: string
 }
 
-const PaymentComponent = ({ setSelectedToken, selectedToken, tokenList, hours }: PriceComponentProps) => {
+const PaymentComponent = ({ setSelectedToken, selectedToken, tokenList, date, customerEmail, message }: PriceComponentProps) => {
     const [paymentMode, setPaymentMode] = useState('');
 
     const handleCardPayment = async () => {
-        if (hours === 0) {
+        if (date.hours.length === 0) {
             toast.error('You should select an hour at least');
             return;
         } else {
             try {
-                const checkoutPage = await checkout(hours);
+                const checkoutPage = await checkout(date, customerEmail, message);
                 window.location.href = checkoutPage;
             } catch (error) {
                 console.error(error);
@@ -29,7 +31,7 @@ const PaymentComponent = ({ setSelectedToken, selectedToken, tokenList, hours }:
     };
 
     const showSolana = () => {
-        if (hours === 0) {
+        if (date.hours.length === 0) {
             toast.error('You should select an hour at least');
         } else {
             setPaymentMode('solana')
@@ -66,7 +68,7 @@ const PaymentComponent = ({ setSelectedToken, selectedToken, tokenList, hours }:
                     setSelectedToken={setSelectedToken}
                     selectedToken={selectedToken}
                     tokenList={tokenList}
-                    hours={hours}
+                    hours={date.hours.length}
                     setPaymentMode={setPaymentMode}
                 />
             )}

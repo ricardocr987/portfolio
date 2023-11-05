@@ -6,7 +6,8 @@ import DayNames from "./DayNames";
 import CalendarContent from "./CalendarContent";
 import TimeInfo from "@/components/calendar/TimeInfo";
 import { DateProps, TokenInfo } from "@/app/meeting/types";
-import { changeTokenInfo } from "@/constants";
+import { changeTokenInfo } from "@/lib/constants";
+import PaymentComponent from "./PaymentComponent";
 
 type PricesMap = {
   EUR: number,
@@ -25,6 +26,15 @@ const Calendar = ({initialDate, availableSlots, prices}: CalendarProps) => {
       changeTokenInfo('USDC', prices.USDC)
   );
   const [date, setDate] = useState<DateProps>(initialDate);
+  const [formData, setFormData] = useState({
+    customerEmail: '',
+    message: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   useEffect(() => {
       setDate({ ...date, hours: [] });
@@ -44,8 +54,8 @@ const Calendar = ({initialDate, availableSlots, prices}: CalendarProps) => {
   ];
 
   return (
-    <div className="md:flex md:space-x-8">
-      <div className="h-[380-px]">
+    <div className="md:flex md:space-x-3 pt-4">
+      <div className="h-[310px]">
         <table>
           <thead>
             <tr>
@@ -62,14 +72,42 @@ const Calendar = ({initialDate, availableSlots, prices}: CalendarProps) => {
           </tbody>
         </table>
       </div>
-      <TimeInfo
-        date={date}
-        setDate={setDate}
-        availableSlots={availableSlots}
-        selectedToken={selectedToken}
-        setSelectedToken={setSelectedToken}
-        tokenList={tokenList}
-      />
+      <div className="flex flex-col dark:text-black md:mt-8 md:w-56">
+        <input
+          className="h-14 px-4 rounded-lg borderBlack dark:bg-white dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none"
+          name="customerEmail"
+          type="email"
+          required
+          maxLength={500}
+          placeholder="Your email"
+          value={formData.customerEmail}
+          onChange={handleChange}
+        />
+        <textarea
+          className="h-56 my-3 rounded-lg borderBlack p-4 dark:bg-white dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none"
+          name="message"
+          placeholder="Your message"
+          required
+          maxLength={5000}
+          value={formData.message}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="flex flex-col">
+        <TimeInfo
+          date={date}
+          setDate={setDate}
+          availableSlots={availableSlots}
+        />
+        <PaymentComponent
+          setSelectedToken={setSelectedToken}
+          selectedToken={selectedToken}
+          tokenList={tokenList}
+          date={date}
+          customerEmail={formData.customerEmail}
+          message={formData.message}
+        />
+      </div>
     </div>
   );
 };

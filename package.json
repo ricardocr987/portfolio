@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@googleapis/calendar": "^9.3.2",
     "@react-email/components": "^0.0.7",
     "@react-email/tailwind": "^0.0.9",
     "@solana/spl-token": "^0.3.8",
@@ -38,10 +39,12 @@
     "resend": "^1.1.0",
     "stripe": "^14.1.0",
     "tailwindcss": "3.3.4",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react-dom": "^18.2.14",
-    "@types/react-vertical-timeline-component": "^3.3.5"
+    "@types/react-vertical-timeline-component": "^3.3.5",
+    "@types/uuid": "^9.0.0"
   }
 }

@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { DateProps, TokenInfo } from "@/app/meeting/types";
-import PaymentComponent from "./PaymentComponent";
+import { DateProps } from "@/app/meeting/types";
 
 type TimeInfo = {
     hour: number
@@ -10,18 +9,12 @@ type TimeInfoProps = {
     date: DateProps;
     setDate: Dispatch<SetStateAction<DateProps>>;
     availableSlots: string[];
-    selectedToken: TokenInfo;
-    setSelectedToken: Dispatch<SetStateAction<TokenInfo>>;
-    tokenList: TokenInfo[];
 };
 
 const TimeInfo = ({
     date,
     setDate,
     availableSlots,
-    selectedToken,
-    setSelectedToken,
-    tokenList,
 }: TimeInfoProps) => {
     const handleSelectedTime = (slot: string) => {
         if (date.hours.includes(slot)) {
@@ -32,7 +25,7 @@ const TimeInfo = ({
     };
 
     return (
-        <div className="py-5 w-64">
+        <div className="py-3 md:w-56">
             {availableSlots.length === 0 ? (
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center w-48 mx-auto block">
                     No available hour slots
@@ -64,12 +57,6 @@ const TimeInfo = ({
                             </li>
                         ))}
                     </ul>
-                    <PaymentComponent 
-                        setSelectedToken={setSelectedToken} 
-                        selectedToken={selectedToken}
-                        tokenList={tokenList}
-                        hours={date.hours.length}
-                    />
                 </div>
             )}
         </div>

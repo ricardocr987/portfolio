@@ -1,11 +1,11 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import ActiveSectionContextProvider from "@/context/active-section-context";
+import ActiveSectionContextProvider from "@/lib/context/active-section-context";
 //import Footer from "@/components/footer";
 import ThemeSwitch from "@/components/theme-switch";
-import ThemeContextProvider from "@/context/theme-context";
+import ThemeContextProvider from "@/lib/context/theme-context";
 import { Toaster } from "react-hot-toast";
-import { SolanaContextProvider } from "@/context/solana-wallet";
+import { SolanaContextProvider } from "@/lib/context/solana-wallet";
 
 const inter = Inter({ subsets: ["latin"] });
 

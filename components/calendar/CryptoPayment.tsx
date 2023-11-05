@@ -4,9 +4,9 @@ import { TokenInfo } from "@/app/meeting/types";
 import { Dispatch, SetStateAction } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from "@solana/web3.js";
-import config from "@/env";
+import config from "@/lib/env";
 import { createTransferInstruction, getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { RIKI_PUBKEY, decimalsFromPubkey, mintFromSymbol } from "@/constants";
+import { RIKI_PUBKEY, decimalsFromPubkey, mintFromSymbol } from "@/lib/constants";
 
 type CryptoComponentProps = {
     selectedToken: TokenInfo;
