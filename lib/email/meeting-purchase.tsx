@@ -28,9 +28,9 @@ export default function MeetingPurchase({
           <Container>
             <Section className="bg-white borderBlack my-10 px-10 py-4 rounded-md">
               <Heading className="leading-tight">
-                You received the following message from purchasing time in riki.bio
+                We have a meeting!
               </Heading>
-              <Text>{message}</Text>
+              <Text dangerouslySetInnerHTML={{ __html: message }} />
               <Hr />
             </Section>
           </Container>

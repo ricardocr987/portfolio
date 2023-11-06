@@ -67,6 +67,7 @@ async function generateMeet(
     const participants = ['ricardocr987@gmail.com', customerEmail];
     const body = {
       summary: message,
+      requestId: sessionId,
       description: 'Google Meet Link',
       start: {
         dateTime: meetingTime.start,
@@ -77,14 +78,14 @@ async function generateMeet(
         timeZone: 'Europe/Madrid',
       },
       conferenceData: {
-        coferenceId: sessionId,
         entryPoints: [
           {
             entryPointType: "video",
-            uri: `https://meet.google.com/${sessionId}`,
-            label: `meet.google.com/${sessionId}`
+            uri: "https://meet.google.com/",
+            label: "meet.google.com"
           }
         ],
+        createRequest: {requestId: sessionId},
         conferenceSolution: {
           key: {
             type: "hangoutsMeet"
@@ -118,11 +119,26 @@ async function generateMeet(
       body: JSON.stringify(body),
     });
     const details = await response.json();
-    console.log(details)
     const meetLink = details.hangoutLink;
+    const htmlLink = details.htmlLink;
+    console.log(details)
+    console.log(htmlLink)
     console.log('Generated Meet Link:', meetLink);
-    if (meetLink) {
-      const meetMessage = `Hello,\n\nYou have successfully purchased a meeting with me. The meeting details are as follows:\n\nMeeting Date & Time: ${meetingTime}\nMeeting Link: ${meetLink}\n\nPlease click the link above at the scheduled time to join the meeting.`;
+    if (meetLink && htmlLink) {
+      const formattedStartTime = new Date(meetingTime.start).toLocaleString();
+      const formattedEndTime = new Date(meetingTime.end).toLocaleString();
+      const messageIntro = `Hello,<br><br>You have successfully purchased a meeting with me.<br><br>`;
+      const meetingDetails = `
+        <strong>Meeting Start Time:</strong> ${formattedStartTime}<br>
+        <strong>Meeting End Time:</strong> ${formattedEndTime}<br>
+        <strong>Meeting Link:</strong> <a href="${meetLink}">${meetLink}</a><br>
+        <strong>Google Calendar Event Link:</strong> <a href="${details.htmlLink}">${details.htmlLink}</a><br><br>`;
+      const messageOutro = `Accept the calendar event or click the link above at the scheduled time to join the meeting.`;
+      
+      const meetMessage = `<p style="font-size: 16px; line-height: 1.5;">
+        ${messageIntro}${meetingDetails}${messageOutro}
+      </p>`;
+      
       await sendMeetingEmail(customerEmail, meetMessage);
       await sendMeetingEmail('ricardocr987@gmail.com', meetMessage);
     } else {
