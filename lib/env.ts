@@ -38,6 +38,7 @@ const googleConfig = {
 const config = {
   RESEND_API_KEY: process.env.RESEND_API_KEY || '',
   SOL_CONNECTION: new Connection(process.env.NEXT_PUBLIC_SOLANA_RPC || ''),
+  SOLANA_WEBHOOK_AUTH: process.env.SOLANA_WEBHOOK_AUTH || '',
   ENVIRONMENT: process.env.ENVIRONMENT || 'dev',
   APP_URL: isProduction ? process.env.APP_URL : 'http://localhost:3000',
   ...stripeConfig,

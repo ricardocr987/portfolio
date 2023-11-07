@@ -22,7 +22,7 @@ export const mintFromSymbol: Record<string, string> = {
     'MSOL': 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
     'BONK': 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
 }
-export const decimalsFromPubkey: Record<string, number> = {
+export const decimalsFromSymbol: Record<string, number> = {
     'SOL': 9,
     'USDC': 6,
     'MSOL': 9,
@@ -34,7 +34,7 @@ export const imagesPathFromSymbol: Record<string, string> = {
     'USDC': '/usdcLogo.svg',
 }
 
-export const RIKI_PUBKEY = new PublicKey('8zWzM8NVDrgqZMqcKhESsTumo1JTyhLjRDpBMZBCy394');
+export const RIKI_PUBKEY = new PublicKey('834hndDPNXq9htXx25eVdVoVu3M62hSaPkTnpkW7Mf3w');
 
 export function changeTokenInfo(symbol: string, price: number): TokenInfo {
     return ({

@@ -55,24 +55,22 @@ const Calendar = ({initialDate, availableSlots, prices}: CalendarProps) => {
 
   return (
     <div className="md:flex md:space-x-3 pt-4">
-      <div className="h-[310px]">
-        <table>
-          <thead>
-            <tr>
-              <th colSpan={7}>
-                <CalendarHeader date={date} setDate={setDate} />
-              </th>
-            </tr>
-          </thead>
-          <thead>
-            <DayNames />
-          </thead>
-          <tbody>
-            <CalendarContent date={date} setDate={setDate} />
-          </tbody>
-        </table>
-      </div>
-      <div className="flex flex-col dark:text-black md:mt-8 md:w-56">
+      <table className="my-8 h-[300px]">
+        <thead>
+          <tr>
+            <th colSpan={7}>
+              <CalendarHeader date={date} setDate={setDate} />
+            </th>
+          </tr>
+        </thead>
+        <thead>
+          <DayNames />
+        </thead>
+        <tbody>
+          <CalendarContent date={date} setDate={setDate} />
+        </tbody>
+      </table>
+      <div className="flex flex-col dark:text-black md:mt-10 md:w-56">
         <input
           className="h-14 px-4 rounded-lg borderBlack dark:bg-white dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none"
           name="customerEmail"
@@ -93,20 +91,34 @@ const Calendar = ({initialDate, availableSlots, prices}: CalendarProps) => {
           onChange={handleChange}
         />
       </div>
-      <div className="flex flex-col">
-        <TimeInfo
-          date={date}
-          setDate={setDate}
-          availableSlots={availableSlots}
-        />
-        <PaymentComponent
-          setSelectedToken={setSelectedToken}
-          selectedToken={selectedToken}
-          tokenList={tokenList}
-          date={date}
-          customerEmail={formData.customerEmail}
-          message={formData.message}
-        />
+      <div className="flex flex-col mt-4">
+        <div className="py-4 md:w-56">
+          {availableSlots.length === 0 ? (
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center w-48 mx-auto block">
+                  No available hour slots
+              </h2>
+          ) : !date.day ? (
+                  <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center w-48 mx-auto block">
+                      Select day to check available hours
+                  </h2>
+          ) : (
+            <>
+              <TimeInfo
+                date={date}
+                setDate={setDate}
+                availableSlots={availableSlots}
+              />
+              <PaymentComponent
+                setSelectedToken={setSelectedToken}
+                selectedToken={selectedToken}
+                tokenList={tokenList}
+                date={date}
+                customerEmail={formData.customerEmail}
+                message={formData.message}
+              />
+            </>
+          )} 
+        </div>
       </div>
     </div>
   );

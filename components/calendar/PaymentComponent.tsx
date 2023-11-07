@@ -20,12 +20,16 @@ const PaymentComponent = ({ setSelectedToken, selectedToken, tokenList, date, cu
         if (date.hours.length === 0) {
             toast.error('You should select an hour at least');
             return;
+        } 
+        if (customerEmail === '') {
+            toast.error('You should introduce an email');
+            return;
         } else {
             try {
                 const checkoutPage = await checkout(date, customerEmail, message);
                 window.location.href = checkoutPage;
             } catch (error) {
-                console.error(error);
+                console.log(error);
             }
         }
     };
@@ -59,17 +63,16 @@ const PaymentComponent = ({ setSelectedToken, selectedToken, tokenList, date, cu
     );
     
     return (
-        <div className="flex flex-col mt-2">
-            <h2 className="text-lg font-semibold mb-2 mt-2">
-                Price: 20 €/slot
-            </h2>
+        <div className="flex flex-col mb-20 mt-4">
             {paymentMode === 'solana' && (
                 <CryptoPayment
                     setSelectedToken={setSelectedToken}
                     selectedToken={selectedToken}
                     tokenList={tokenList}
-                    hours={date.hours.length}
                     setPaymentMode={setPaymentMode}
+                    date={date}
+                    customerEmail={customerEmail}
+                    message={message}
                 />
             )}
             {paymentMode === '' && InitialState}
