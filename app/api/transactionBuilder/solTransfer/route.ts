@@ -1,9 +1,9 @@
 import { TransactionInstruction, PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from "@solana/web3.js";
 import { decimalsFromSymbol, RIKI_PUBKEY } from "@/lib/constants";
 import { NextRequest, NextResponse } from "next/server";
+import { encryptData } from "@/lib/encrypt";
 import { v4 as uuid } from 'uuid'
 import config from "@/lib/env";
-import { encryptData } from "@/lib/encrypt";
 
 export async function POST(req: NextRequest) {
     try {

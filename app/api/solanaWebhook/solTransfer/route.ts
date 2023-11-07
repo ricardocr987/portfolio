@@ -10,11 +10,11 @@ import { formatDateProps, generateMeet } from "@/lib/meet";
 const requestBodySchema = z.array(BodyRequest);
 
 export async function POST(req: NextRequest) {
-    const authorization = req.headers.get('Authorization');
+    /*const authorization = req.headers.get('Authorization');
     if (authorization !== `Bearer ${config.SOLANA_WEBHOOK_AUTH}`) {
         console.log('Unauthorized request');
         return new Response('Unauthorized request', { status: 401 });
-    }
+    }*/
 
     const requestBody = requestBodySchema.parse(req.body);
     console.log('Received request body:', requestBody);

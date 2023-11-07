@@ -1,5 +1,4 @@
 import { VersionedTransaction } from "@solana/web3.js";
-import { decimalsFromSymbol } from "@/lib/constants";
 import { DateProps, TokenInfo } from "@/app/meeting/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Dispatch, SetStateAction } from "react";
@@ -46,8 +45,8 @@ const CryptoComponent = ({
         
             const selectedTokenSymbol = selectedToken.symbol;
             const apiEndpoints: Record<string, string> = {
-                USDC: `${config.APP_URL}/api/transactionBuilder/usdcTransfer`,
-                SOL: `${config.APP_URL}/api/transactionBuilder/solTransfer`,
+                USDC: `https://riki.bio/api/transactionBuilder/usdcTransfer`,
+                SOL: `https://riki.bio/api/transactionBuilder/solTransfer`,
             };
             const apiEndpoint = apiEndpoints[selectedTokenSymbol];
         
@@ -77,8 +76,9 @@ const CryptoComponent = ({
             };
         
             const response = await fetch(apiEndpoint, requestOptions);
-        
+            
             if (!response.ok) {
+                console.log(response)
                 throw new Error(`API request failed with status: ${response.status}`);
             }
         
