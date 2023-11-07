@@ -45,8 +45,8 @@ const CryptoComponent = ({
         
             const selectedTokenSymbol = selectedToken.symbol;
             const apiEndpoints: Record<string, string> = {
-                USDC: `https://riki.bio/api/transactionBuilder/usdcTransfer`,
-                SOL: `https://riki.bio/api/transactionBuilder/solTransfer`,
+                USDC: `https://www.riki.bio/api/transactionBuilder/usdcTransfer`,
+                SOL: `https://www.riki.bio/api/transactionBuilder/solTransfer`,
             };
             const apiEndpoint = apiEndpoints[selectedTokenSymbol];
         
