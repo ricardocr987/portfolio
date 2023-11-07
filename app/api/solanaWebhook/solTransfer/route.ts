@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     }
 
     const requestBody = requestBodySchema.parse(req.body);
-    console.log(requestBody)
+    console.log('Received request body:', requestBody);
 
     const asyncTasks = requestBody.map(async (rawTxn) => {
         try {
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
 
             try {
                 await generateMeet(meetingTime, customerEmail, sessionId, message);
+                console.log('Generated meeting:', meetingTime);
             } catch (error) {
                 console.error('Webhook Error:', error);
                 return NextResponse.json(JSON.stringify({ error }));
@@ -45,5 +46,6 @@ export async function POST(req: NextRequest) {
 
     const results = await Promise.all(asyncTasks);
     const transactionIds = results.map((result) => result).join(", ");
+    console.log('Transaction IDs:', transactionIds);
     return new Response(`IDs: ${transactionIds} added.`, { status: 200 });
 }
