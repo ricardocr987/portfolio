@@ -22,8 +22,9 @@ export async function POST(req: NextRequest) {
     console.log('Received request body:', JSON.stringify(requestBody, null, 2));
 
     const solTransferAction = requestBody.actions.find((action) => action.type === "SOL_TRANSFER");
-    const memoAction = requestBody.actions.find((action) => action.type === "MEMO");    
-    const decryptedData = decryptData(memoAction?.info.data);
+    const memoAction = requestBody.actions.find((action) => action.type === "MEMO");
+    console.log(memoAction) 
+    const decryptedData = decryptData(memoAction?.info.message);
     console.log(decryptData)
     /*const asyncTasks = requestBody.map(async (rawTxn) => {
         try {
