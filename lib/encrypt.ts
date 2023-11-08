@@ -18,7 +18,7 @@ export function encryptData(data: string) {
   const cipher = crypto.createCipheriv(process.env.ECNRYPTION_METHOD || '', key, encryptionIV)
   return Buffer.from(
     cipher.update(data, 'utf8', 'hex') + cipher.final('hex')
-  )
+  ).toString('base64') // Encrypts data and converts to hex and base64
 }
 
 // Decrypt data

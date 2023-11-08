@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { encryptData } from "@/lib/encrypt";
 import { v4 as uuid } from 'uuid'
 import config from "@/lib/env";
+import bs58 from "bs58";
 
 export async function POST(req: NextRequest) {
     try {
@@ -11,7 +12,7 @@ export async function POST(req: NextRequest) {
         const { pubkey, date, customerEmail, message, price } = body;
         const memoIx = new TransactionInstruction({
             keys: [{ pubkey: new PublicKey(pubkey), isSigner: true, isWritable: true }],
-            data: encryptData(JSON.stringify({ date, customerEmail, sessionId: uuid(), message })),
+            data: Buffer.from(encryptData(JSON.stringify({ date, customerEmail, sessionId: uuid(), message }))),
             programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
         });
 
