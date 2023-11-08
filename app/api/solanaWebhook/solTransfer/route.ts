@@ -4,23 +4,23 @@ import { DateProps } from "@/app/meeting/types";
 import { formatDateProps, generateMeet } from "@/lib/meet";
 
 export async function POST(req: NextRequest) {
-        try {
-                /*const authorization = req.headers.get('Authorization');
-    if (authorization !== `Bearer ${config.SOLANA_WEBHOOK_AUTH}`) {
-        console.log('Unauthorized request');
-        return new Response('Unauthorized request', { status: 401 });
-    }*/
-    const requestBody = await req.json() as RequestBody;
-    /*const transactionBlockTime = requestBody.raw.blockTime;
-    const currentSlot = await config.SOL_CONNECTION.getSlot(confirmOptions);
-    const currentBlockTime = await config.SOL_CONNECTION.getBlockTime(currentSlot);*/
-    console.log('Received request body:', JSON.stringify(requestBody, null, 2));
+    try {
+        /*const authorization = req.headers.get('Authorization');
+        if (authorization !== `Bearer ${config.SOLANA_WEBHOOK_AUTH}`) {
+            console.log('Unauthorized request');
+            return new Response('Unauthorized request', { status: 401 });
+        }*/
+        const requestBody = await req.json() as RequestBody;
+        /*const transactionBlockTime = requestBody.raw.blockTime;
+        const currentSlot = await config.SOL_CONNECTION.getSlot(confirmOptions);
+        const currentBlockTime = await config.SOL_CONNECTION.getBlockTime(currentSlot);*/
+        console.log('Received request body:', JSON.stringify(requestBody, null, 2));
 
-    const solTransferAction = requestBody.actions.find((action) => action.type === "SOL_TRANSFER");
-    console.log('solTransferAction', solTransferAction);
+        const solTransferAction = requestBody.actions.find((action) => action.type === "SOL_TRANSFER");
+        console.log('solTransferAction', solTransferAction);
 
-    const memoAction = requestBody.actions.find((action) => action.type === "MEMO");
-    const data = JSON.parse(decryptData(memoAction?.info.message));
+        const memoAction = requestBody.actions.find((action) => action.type === "MEMO");
+        const data = decryptData(memoAction?.info.message);
         const { date, customerEmail, sessionId, message } = JSON.parse(data);
         const dateProps: DateProps = date;
         const meetingTime = formatDateProps(dateProps);
