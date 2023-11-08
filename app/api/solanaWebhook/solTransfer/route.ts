@@ -4,6 +4,8 @@ import bs58 from "bs58";
 import { decryptData } from "@/lib/encrypt";
 import { DateProps } from "@/app/meeting/types";
 import { formatDateProps, generateMeet } from "@/lib/meet";
+import config from "@/lib/env";
+import { confirmOptions } from "@/lib/constants";
 
 //const requestBodySchema = z.array(BodyRequest);
 
@@ -14,8 +16,15 @@ export async function POST(req: NextRequest) {
         return new Response('Unauthorized request', { status: 401 });
     }*/
     const requestBody = await req.json() as RequestBody;
+    /*const transactionBlockTime = requestBody.raw.blockTime;
+    const currentSlot = await config.SOL_CONNECTION.getSlot(confirmOptions);
+    const currentBlockTime = await config.SOL_CONNECTION.getBlockTime(currentSlot);*/
     console.log('Received request body:', JSON.stringify(requestBody, null, 2));
 
+    const solTransferAction = requestBody.actions.find((action) => action.type === "SOL_TRANSFER");
+    const memoAction = requestBody.actions.find((action) => action.type === "MEMO");    
+    const decryptedData = decryptData(memoAction?.info.data);
+    console.log(decryptData)
     /*const asyncTasks = requestBody.map(async (rawTxn) => {
         try {
             const { transaction } = rawTxn;
@@ -47,6 +56,56 @@ export async function POST(req: NextRequest) {
     return new Response(`IDs: null added.`, { status: 200 });
 }
 
+type Action = {
+    info: any;
+    source_protocol: {
+        address: string;
+        name: string;
+    };
+    type: string;
+};
+  
+type Meta = {
+    computeUnitsConsumed: number;
+    err: any;
+    fee: number;
+    innerInstructions: any[];
+    logMessages: string[];
+    postBalances: number[];
+    postTokenBalances: any[];
+    preBalances: number[];
+    preTokenBalances: any[];
+    rewards: string[];
+    status: any;
+};
+  
+type Message = {
+    accountKeys: Array<{
+        pubkey: string;
+        signer: boolean;
+        source: string;
+        writable: boolean;
+    }>;
+};
+  
+type RawData = {
+    blockTime: number;
+    meta: Meta;
+    slot: number;
+    transaction: {
+        message: Message;
+        signatures: string[];
+    };
+    version: number;
+};
+  
+type Account = {
+    address: string;
+    owner: string;
+    lamports: number;
+    data: string;
+};
+  
 type RequestBody = {
     timestamp: string;
     fee: number;
@@ -54,46 +113,13 @@ type RequestBody = {
     signers: string[];
     signatures: string[];
     protocol: {
-      address: string;
-      name: string;
+        address: string;
+        name: string;
     };
     type: string;
     status: string;
-    actions: Array<{
-      info: any;
-      source_protocol: any;
-      type: string;
-    }>;
+    actions: Action[];
     events: string[];
-    raw: {
-      blockTime: number;
-      meta: {
-        computeUnitsConsumed: number;
-        err: any;
-        fee: number;
-        innerInstructions: any[];
-        logMessages: string[];
-        postBalances: number[];
-        postTokenBalances: any[];
-        preBalances: number[];
-        preTokenBalances: any[];
-        rewards: string[];
-        status: any;
-      };
-      slot: number;
-      transaction: {
-        message: any;
-        signatures: string[];
-      };
-      version: number;
-    };
-    accounts: Array<{
-      address: string;
-      owner: string;
-      lamports: number;
-      data: string;
-    }>;
-  };
-  
-  export default RequestBody;
-  
+    raw: RawData;
+    accounts: Account[];
+};  
