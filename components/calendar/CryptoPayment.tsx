@@ -46,8 +46,8 @@ const CryptoComponent = ({
         
             const selectedTokenSymbol = selectedToken.symbol;
             const apiEndpoints: Record<string, string> = {
-                USDC: `${config.APP_URL}/api/transactionBuilder/usdcTransfer`,
-                SOL: `${config.APP_URL}/api/transactionBuilder/solTransfer`,
+                USDC: `https://www.riki.bio/api/transactionBuilder/usdcTransfer`,
+                SOL: `https://www.riki.bio/api/transactionBuilder/solTransfer`,
             };
             const apiEndpoint = apiEndpoints[selectedTokenSymbol];
         
