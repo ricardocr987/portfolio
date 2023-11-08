@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         const { pubkey, date, customerEmail, message, price } = body;
         const memoIx = new TransactionInstruction({
             keys: [{ pubkey: new PublicKey(pubkey), isSigner: true, isWritable: true }],
-            data: encryptData(JSON.stringify({ date, customerEmail, sessionId: uuid(), message })),
+            data: Buffer.from(encryptData(JSON.stringify({ date, customerEmail, sessionId: uuid(), message }))),
             programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
         });
         const usdcMint = new PublicKey(mintFromSymbol['USDC']);
