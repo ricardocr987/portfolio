@@ -1,4 +1,3 @@
-import config from "@/lib/env";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { BodyRequest } from "./schema";
@@ -7,7 +6,7 @@ import { decryptData } from "@/lib/encrypt";
 import { DateProps } from "@/app/meeting/types";
 import { formatDateProps, generateMeet } from "@/lib/meet";
 
-const requestBodySchema = z.array(BodyRequest);
+//const requestBodySchema = z.array(BodyRequest);
 
 export async function POST(req: NextRequest) {
     /*const authorization = req.headers.get('Authorization');
@@ -15,11 +14,10 @@ export async function POST(req: NextRequest) {
         console.log('Unauthorized request');
         return new Response('Unauthorized request', { status: 401 });
     }*/
-
-    const requestBody = requestBodySchema.parse(req.body);
+    const requestBody = await req.json();
     console.log('Received request body:', requestBody);
 
-    const asyncTasks = requestBody.map(async (rawTxn) => {
+    /*const asyncTasks = requestBody.map(async (rawTxn) => {
         try {
             const { transaction } = rawTxn;
             const instructionData = transaction.message.instructions[1].data;
@@ -46,6 +44,6 @@ export async function POST(req: NextRequest) {
 
     const results = await Promise.all(asyncTasks);
     const transactionIds = results.map((result) => result).join(", ");
-    console.log('Transaction IDs:', transactionIds);
-    return new Response(`IDs: ${transactionIds} added.`, { status: 200 });
+    console.log('Transaction IDs:', transactionIds);*/
+    return new Response(`IDs: null added.`, { status: 200 });
 }
