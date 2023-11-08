@@ -88,7 +88,6 @@ const CryptoComponent = ({
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
             const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
             const latestBlockHash = await config.SOL_CONNECTION.getLatestBlockhash();
-            console.log(latestBlockHash)
             await config.SOL_CONNECTION.confirmTransaction({
                 blockhash: latestBlockHash.blockhash,
                 lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,

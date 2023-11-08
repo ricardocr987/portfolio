@@ -3,12 +3,14 @@ import { decryptData } from "@/lib/encrypt";
 import { DateProps } from "@/app/meeting/types";
 import { formatDateProps, generateMeet } from "@/lib/meet";
 import { RIKI_PUBKEY } from "@/lib/constants";
+import config from "@/lib/env";
 
 export async function POST(req: NextRequest) {
     try {
-        const authorization = req.headers.get('Authorization');
-        console.log('Auth:', authorization)
-        console.log('Headers:', req.headers)
+        const authorization = req.headers.get('x-api-key');
+        if (authorization === config.SOLANA_WEBHOOK_AUTH) {
+            throw new Error('Invalid SOL_TRANSFER action');
+        }
         /*if (authorization !== `Bearer ${config.SOLANA_WEBHOOK_AUTH}`) {
             console.log('Unauthorized request');
             return new Response('Unauthorized request', { status: 401 });
@@ -17,13 +19,10 @@ export async function POST(req: NextRequest) {
         console.log('Received request body:', JSON.stringify(requestBody, null, 2));
 
         const solTransferAction = requestBody.actions.find((action) => action.type === "SOL_TRANSFER");
-        console.log('solTransferAction', solTransferAction);
-
         const usdcTransferAction = requestBody.actions.find((action) => action.type === "TOKEN_TRANSFER");
-        console.log('solTransferAction', usdcTransferAction);
 
-        if (!isSolTransfer(solTransferAction) || !isUsdcTransfer(usdcTransferAction)) {
-            throw new Error('Invalid SOL_TRANSFER action');
+        if (!(isSolTransfer(solTransferAction) || isUsdcTransfer(usdcTransferAction))) {
+            throw new Error('Invalid transaction actions');
         }
 
         const memoAction = requestBody.actions.find((action) => action.type === "MEMO");
@@ -38,7 +37,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(JSON.stringify({ received: true }));
     } catch (error) {
         console.error('Webhook Error:', error);
-        return NextResponse.json(JSON.stringify({ error: 'Stripe error' }));
+        return NextResponse.json(JSON.stringify({ error }));
     }
 }
 
