@@ -92,7 +92,7 @@ const CryptoComponent = ({
             const result = await config.SOL_CONNECTION.confirmTransaction({
                 ...latestBlockhash,
                 signature,
-            });
+            }, 'confirmed');
             console.log(result)
 
             toast.success('Payment confirmed. You should have received a mail.');

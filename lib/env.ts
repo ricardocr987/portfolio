@@ -1,4 +1,5 @@
 import { Connection } from "@solana/web3.js";
+import { confirmOptions } from "./constants";
 
 const isProduction = process.env.ENVIRONMENT === 'prod';
 
@@ -37,7 +38,7 @@ const googleConfig = {
 
 const config = {
   RESEND_API_KEY: process.env.RESEND_API_KEY || '',
-  SOL_CONNECTION: new Connection(process.env.NEXT_PUBLIC_SOLANA_RPC || ''),
+  SOL_CONNECTION: new Connection(process.env.NEXT_PUBLIC_SOLANA_RPC || '', confirmOptions),
   SOLANA_WEBHOOK_AUTH: process.env.SOLANA_WEBHOOK_AUTH || '',
   ENVIRONMENT: process.env.ENVIRONMENT || 'dev',
   APP_URL: isProduction ? process.env.APP_URL : 'http://localhost:3000',
