@@ -1,76 +1,53 @@
 import { z } from "zod";
 
-const UiTokenAmount = z.object({
-  amount: z.string(),
-  decimals: z.number(),
-  uiAmount: z.number(),
-  uiAmountString: z.string(),
-});
-
-const PostTokenBalances = z.object({
-  accountIndex: z.number(),
-  mint: z.string(),
-  owner: z.string(),
-  programId: z.string(),
-  uiTokenAmount: UiTokenAmount,
-});
-
-const InnerInstruction = z.object({
-  index: z.number(),
-  instructions: z.array(
+export const solTransferSchema = z.object({
+  timestamp: z.string(),
+  fee: z.number(),
+  fee_payer: z.string(),
+  signers: z.array(z.string()),
+  signatures: z.array(z.string()),
+  protocol: z.object({
+    address: z.string(),
+    name: z.string(),
+  }),
+  type: z.string(),
+  status: z.string(),
+  actions: z.array(
     z.object({
-      accounts: z.array(z.number()),
+      info: z.unknown(), // You may need to specify the correct type
+      source_protocol: z.unknown(), // You may need to specify the correct type
+      type: z.string(),
+    })
+  ),
+  events: z.array(z.string()), // You may need to specify the correct type
+  raw: z.object({
+    blockTime: z.number(),
+    meta: z.object({
+      computeUnitsConsumed: z.number(),
+      err: z.unknown(), // You may need to specify the correct type
+      fee: z.number(),
+      innerInstructions: z.array(z.unknown()), // You may need to specify the correct type
+      logMessages: z.array(z.string()),
+      postBalances: z.array(z.number()),
+      postTokenBalances: z.array(z.unknown()), // You may need to specify the correct type
+      preBalances: z.array(z.number()),
+      preTokenBalances: z.array(z.unknown()), // You may need to specify the correct type
+      rewards: z.array(z.string()), // You may need to specify the correct type
+      status: z.unknown(), // You may need to specify the correct type
+    }),
+    slot: z.number(),
+    transaction: z.object({
+      message: z.unknown(), // You may need to specify the correct type
+      signatures: z.array(z.string()),
+    }),
+    version: z.number(),
+  }),
+  accounts: z.array(
+    z.object({
+      address: z.string(),
+      owner: z.string(),
+      lamports: z.number(),
       data: z.string(),
-      programIdIndex: z.number(),
     })
   ),
 });
-
-const Meta = z.object({
-  err: z.union([z.string(), z.string()]),
-  fee: z.number(),
-  innerInstructions: z.array(InnerInstruction),
-  loadedAddresses: z.object({
-    readonly: z.array(z.string()),
-    writable: z.array(z.string()),
-  }),
-  logMessages: z.array(z.string()),
-  postBalances: z.array(z.number()),
-  postTokenBalances: z.array(PostTokenBalances),
-  preBalances: z.array(z.number()),
-  preTokenBalances: z.array(PostTokenBalances),
-  rewards: z.array(z.string()),
-});
-
-const Instruction = z.object({
-  accounts: z.array(z.number()),
-  data: z.string(),
-  programIdIndex: z.number(),
-});
-
-const Message = z.object({
-  accountKeys: z.array(z.string()),
-  addressTableLookups: z.array(z.string()),
-  header: z.object({
-    numReadonlySignedAccounts: z.number(),
-    numReadonlyUnsignedAccounts: z.number(),
-    numRequiredSignatures: z.number(),
-  }),
-  instructions: z.array(Instruction),
-  recentBlockhash: z.string(),
-});
-
-const Transaction = z.object({
-  message: Message,
-  signatures: z.array(z.string()),
-});
-
-export const BodyRequest = z.object({
-  blockTime: z.number(),
-  indexWithinBlock: z.number(),
-  meta: Meta,
-  slot: z.number(),
-  transaction: Transaction,
-  version: z.number(),
-});
-

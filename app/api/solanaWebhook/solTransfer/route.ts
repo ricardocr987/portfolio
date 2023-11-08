@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { BodyRequest } from "./schema";
+import { solTransferSchema } from "./schema";
 import bs58 from "bs58";
 import { decryptData } from "@/lib/encrypt";
 import { DateProps } from "@/app/meeting/types";
 import { formatDateProps, generateMeet } from "@/lib/meet";
-
-//const requestBodySchema = z.array(BodyRequest);
 
 export async function POST(req: NextRequest) {
     /*const authorization = req.headers.get('Authorization');
@@ -14,9 +12,9 @@ export async function POST(req: NextRequest) {
         console.log('Unauthorized request');
         return new Response('Unauthorized request', { status: 401 });
     }*/
-    const requestBody = await req.json();
+    const requestBody = solTransferSchema.parse(req.body);
     console.log('Received request body:', requestBody);
-
+    console.log(requestBody.actions.map(x => x.info))
     /*const asyncTasks = requestBody.map(async (rawTxn) => {
         try {
             const { transaction } = rawTxn;
