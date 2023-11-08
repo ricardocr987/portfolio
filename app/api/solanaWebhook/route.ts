@@ -8,9 +8,8 @@ import config from "@/lib/env";
 export async function POST(req: NextRequest) {
     try {
         const authorization = req.headers.get('x-api-key');
-        console.log(authorization, config.SOLANA_WEBHOOK_AUTH)
-        if (authorization === config.SOLANA_WEBHOOK_AUTH) {
-            throw new Error('Invalid callback request');
+        if (authorization == config.SOLANA_WEBHOOK_AUTH) {
+            throw new Error('Invalid authcallback request');
         }
         /*if (authorization !== `Bearer ${config.SOLANA_WEBHOOK_AUTH}`) {
             console.log('Unauthorized request');
