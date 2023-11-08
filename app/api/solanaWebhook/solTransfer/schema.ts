@@ -1,53 +1,89 @@
 import { z } from "zod";
 
 export const solTransferSchema = z.object({
-  timestamp: z.string(),
-  fee: z.number(),
-  fee_payer: z.string(),
-  signers: z.array(z.string()),
-  signatures: z.array(z.string()),
-  protocol: z.object({
-    address: z.string(),
-    name: z.string(),
-  }),
-  type: z.string(),
-  status: z.string(),
+  timestamp: z.string().default(""),
+  fee: z.number().default(0),
+  fee_payer: z.string().default(""),
+  signers: z.array(z.string()).default([]),
+  signatures: z.array(z.string()).default([]),
+  protocol: z
+    .object({
+      address: z.string().default(""),
+      name: z.string().default(""),
+    })
+    .default({ address: "", name: "" }),
+  type: z.string().default(""),
+  status: z.string().default(""),
   actions: z.array(
     z.object({
-      info: z.unknown(), // You may need to specify the correct type
-      source_protocol: z.unknown(), // You may need to specify the correct type
-      type: z.string(),
+      info: z.unknown().default(null),
+      source_protocol: z.unknown().default(null),
+      type: z.string().default("UNKNOWN"),
     })
-  ),
-  events: z.array(z.string()), // You may need to specify the correct type
-  raw: z.object({
-    blockTime: z.number(),
-    meta: z.object({
-      computeUnitsConsumed: z.number(),
-      err: z.unknown(), // You may need to specify the correct type
-      fee: z.number(),
-      innerInstructions: z.array(z.unknown()), // You may need to specify the correct type
-      logMessages: z.array(z.string()),
-      postBalances: z.array(z.number()),
-      postTokenBalances: z.array(z.unknown()), // You may need to specify the correct type
-      preBalances: z.array(z.number()),
-      preTokenBalances: z.array(z.unknown()), // You may need to specify the correct type
-      rewards: z.array(z.string()), // You may need to specify the correct type
-      status: z.unknown(), // You may need to specify the correct type
+  ).default([]),
+  events: z.array(z.string()).default([]),
+  raw: z
+    .object({
+      blockTime: z.number().default(0),
+      meta: z
+        .object({
+          computeUnitsConsumed: z.number().default(0),
+          err: z.unknown().default(null),
+          fee: z.number().default(0),
+          innerInstructions: z.array(z.unknown()).default([]),
+          logMessages: z.array(z.string()).default([]),
+          postBalances: z.array(z.number()).default([]),
+          postTokenBalances: z.array(z.unknown()).default([]),
+          preBalances: z.array(z.number()).default([]),
+          preTokenBalances: z.array(z.unknown()).default([]),
+          rewards: z.array(z.string()).default([]),
+          status: z.unknown().default(null),
+        })
+        .default({
+          computeUnitsConsumed: 0,
+          err: null,
+          fee: 0,
+          innerInstructions: [],
+          logMessages: [],
+          postBalances: [],
+          postTokenBalances: [],
+          preBalances: [],
+          preTokenBalances: [],
+          rewards: [],
+          status: null,
+        }),
+      slot: z.number().default(0),
+      transaction: z.object({
+        message: z.unknown().default(null),
+        signatures: z.array(z.string()).default([]),
+      }),
+      version: z.number().default(0),
+    })
+    .default({
+      blockTime: 0,
+      meta: {
+        computeUnitsConsumed: 0,
+        err: null,
+        fee: 0,
+        innerInstructions: [],
+        logMessages: [],
+        postBalances: [],
+        postTokenBalances: [],
+        preBalances: [],
+        preTokenBalances: [],
+        rewards: [],
+        status: null,
+      },
+      slot: 0,
+      transaction: { message: null, signatures: [] },
+      version: 0,
     }),
-    slot: z.number(),
-    transaction: z.object({
-      message: z.unknown(), // You may need to specify the correct type
-      signatures: z.array(z.string()),
-    }),
-    version: z.number(),
-  }),
   accounts: z.array(
     z.object({
-      address: z.string(),
-      owner: z.string(),
-      lamports: z.number(),
-      data: z.string(),
+      address: z.string().default(""),
+      owner: z.string().default(""),
+      lamports: z.number().default(0),
+      data: z.string().default(""),
     })
-  ),
+  ).default([]),
 });
