@@ -2,22 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 import { decryptData } from "@/lib/encrypt";
 import { DateProps } from "@/app/meeting/types";
 import { formatDateProps, generateMeet } from "@/lib/meet";
+import { RIKI_PUBKEY } from "@/lib/constants";
 
 export async function POST(req: NextRequest) {
     try {
-        /*const authorization = req.headers.get('Authorization');
-        if (authorization !== `Bearer ${config.SOLANA_WEBHOOK_AUTH}`) {
+        const authorization = req.headers.get('Authorization');
+        console.log('Auth:', authorization)
+        console.log('Headers:', req.headers)
+        /*if (authorization !== `Bearer ${config.SOLANA_WEBHOOK_AUTH}`) {
             console.log('Unauthorized request');
             return new Response('Unauthorized request', { status: 401 });
         }*/
         const requestBody = await req.json() as RequestBody;
-        /*const transactionBlockTime = requestBody.raw.blockTime;
-        const currentSlot = await config.SOL_CONNECTION.getSlot(confirmOptions);
-        const currentBlockTime = await config.SOL_CONNECTION.getBlockTime(currentSlot);*/
         console.log('Received request body:', JSON.stringify(requestBody, null, 2));
 
         const solTransferAction = requestBody.actions.find((action) => action.type === "SOL_TRANSFER");
         console.log('solTransferAction', solTransferAction);
+
+        const usdcTransferAction = requestBody.actions.find((action) => action.type === "TOKEN_TRANSFER");
+        console.log('solTransferAction', usdcTransferAction);
+
+        if (!isSolTransfer(solTransferAction) || !isUsdcTransfer(usdcTransferAction)) {
+            throw new Error('Invalid SOL_TRANSFER action');
+        }
 
         const memoAction = requestBody.actions.find((action) => action.type === "MEMO");
         const data = decryptData(memoAction?.info.message);
@@ -34,6 +41,25 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(JSON.stringify({ error: 'Stripe error' }));
     }
 }
+
+function isSolTransfer(action: Action | undefined): boolean {
+    return (
+        action &&
+        action.type === "SOL_TRANSFER" &&
+        action.info &&
+        action.info.receiver === RIKI_PUBKEY.toString()
+    );
+}
+  
+function isUsdcTransfer(action: Action | undefined): boolean {
+    return (
+        action &&
+        action.type === "TOKEN_TRANSFER" &&
+        action.info &&
+        action.info.receiver === RIKI_PUBKEY.toString()
+    );
+}
+  
 
 type Action = {
     info: any;

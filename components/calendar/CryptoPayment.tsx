@@ -1,7 +1,8 @@
 import { VersionedTransaction } from "@solana/web3.js";
 import { DateProps, TokenInfo } from "@/app/meeting/types";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Dispatch, SetStateAction } from "react";
+import { CSSProperties, Dispatch, SetStateAction, useState } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 import TokenSelector from "./TokenSelector";
 import toast from "react-hot-toast";
 import config from "@/lib/env";
@@ -26,6 +27,7 @@ const CryptoComponent = ({
     message
 }: CryptoComponentProps) => {
     const { wallets, select, connect, sendTransaction, publicKey } = useWallet();
+    const [loading, setLoading] = useState(false);
 
     const connectWallet = async () => {
         select(wallets[0].adapter.name);
@@ -39,6 +41,7 @@ const CryptoComponent = ({
         }
 
         try {
+            setLoading(true);
             if (!publicKey) {
                 return;
             }
@@ -85,11 +88,21 @@ const CryptoComponent = ({
             const serializedBase64 = await response.json();
             const serializedBuffer = Buffer.from(serializedBase64.transaction, 'base64');
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
-            await sendTransaction(transaction, config.SOL_CONNECTION);
+            const tx = await sendTransaction(transaction, config.SOL_CONNECTION);
+            const latestBlockHash = await config.SOL_CONNECTION.getLatestBlockhash();
+            await config.SOL_CONNECTION.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: tx,
+            });
+
+            toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
             console.error('An error occurred:', error);
             toast.error('Payment failed. Please try again later.');
-        }        
+        }finally {
+            setLoading(false);
+        }     
     };
 
     return (
@@ -108,13 +121,26 @@ const CryptoComponent = ({
                     hours={date.hours.length}
                 />
                 {publicKey ? 
+                    loading ? (
+                    <div className="flex justify-center">
+                        <ClipLoader
+                            color={'#ffffff'}
+                            loading={loading}
+                            cssOverride={override}
+                            size={150}
+                            aria-label="Loading Spinner"
+                            data-testid="loader"
+                        />
+                    </div>
+                  ) : (
                     <button
-                        type="submit"
-                        className="cursor-pointer border-gray-800 border bg-orange-500 hover:bg-orange-400 rounded-md w-full"
-                        onClick={handlePayment}
+                      type="submit"
+                      className="cursor-pointer border-gray-800 border bg-orange-500 hover-bg-orange-400 rounded-md w-full"
+                      onClick={handlePayment}
                     >
-                        Pay
+                      Pay
                     </button>
+                  )
                 :
                     <button
                         type="submit"
@@ -130,3 +156,9 @@ const CryptoComponent = ({
 };
 
 export default CryptoComponent;
+
+const override: CSSProperties = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: "red",
+};
