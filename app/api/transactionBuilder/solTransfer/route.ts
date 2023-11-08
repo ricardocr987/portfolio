@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { encryptData } from "@/lib/encrypt";
 import { v4 as uuid } from 'uuid'
 import config from "@/lib/env";
-import bs58 from "bs58";
 
 export async function POST(req: NextRequest) {
     try {
