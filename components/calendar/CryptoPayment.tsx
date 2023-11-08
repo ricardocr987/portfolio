@@ -87,12 +87,13 @@ const CryptoComponent = ({
             const serializedBuffer = Buffer.from(serializedBase64.transaction, 'base64');
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
             const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
-            const latestBlockHash = await config.SOL_CONNECTION.getLatestBlockhash();
-            await config.SOL_CONNECTION.confirmTransaction({
-                blockhash: latestBlockHash.blockhash,
-                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            const latestBlockhash = await config.SOL_CONNECTION.getLatestBlockhash();
+            
+            const result = await config.SOL_CONNECTION.confirmTransaction({
+                ...latestBlockhash,
                 signature,
-            }, 'confirmed');
+            });
+            console.log(result)
 
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
