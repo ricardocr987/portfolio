@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { solTransferSchema } from "./schema";
 import bs58 from "bs58";
 import { decryptData } from "@/lib/encrypt";
 import { DateProps } from "@/app/meeting/types";
 import { formatDateProps, generateMeet } from "@/lib/meet";
+
+//const requestBodySchema = z.array(BodyRequest);
 
 export async function POST(req: NextRequest) {
     /*const authorization = req.headers.get('Authorization');
@@ -12,9 +13,9 @@ export async function POST(req: NextRequest) {
         console.log('Unauthorized request');
         return new Response('Unauthorized request', { status: 401 });
     }*/
-    const requestBody = solTransferSchema.parse(req.body);
-    console.log('Received request body:', requestBody);
-    console.log(requestBody.actions.map(x => x.info))
+    const requestBody = await req.json() as RequestBody;
+    console.log('Received request body:', JSON.stringify(requestBody, null, 2));
+
     /*const asyncTasks = requestBody.map(async (rawTxn) => {
         try {
             const { transaction } = rawTxn;
@@ -45,3 +46,54 @@ export async function POST(req: NextRequest) {
     console.log('Transaction IDs:', transactionIds);*/
     return new Response(`IDs: null added.`, { status: 200 });
 }
+
+type RequestBody = {
+    timestamp: string;
+    fee: number;
+    fee_payer: string;
+    signers: string[];
+    signatures: string[];
+    protocol: {
+      address: string;
+      name: string;
+    };
+    type: string;
+    status: string;
+    actions: Array<{
+      info: any;
+      source_protocol: any;
+      type: string;
+    }>;
+    events: string[];
+    raw: {
+      blockTime: number;
+      meta: {
+        computeUnitsConsumed: number;
+        err: any;
+        fee: number;
+        innerInstructions: any[];
+        logMessages: string[];
+        postBalances: number[];
+        postTokenBalances: any[];
+        preBalances: number[];
+        preTokenBalances: any[];
+        rewards: string[];
+        status: any;
+      };
+      slot: number;
+      transaction: {
+        message: any;
+        signatures: string[];
+      };
+      version: number;
+    };
+    accounts: Array<{
+      address: string;
+      owner: string;
+      lamports: number;
+      data: string;
+    }>;
+  };
+  
+  export default RequestBody;
+  
