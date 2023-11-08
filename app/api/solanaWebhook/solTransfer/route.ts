@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const memoAction = requestBody.actions.find((action) => action.type === "MEMO");
     console.log(memoAction) 
     const decryptedData = decryptData(memoAction?.info.message);
-    console.log(decryptData)
+    console.log(decryptedData)
     /*const asyncTasks = requestBody.map(async (rawTxn) => {
         try {
             const { transaction } = rawTxn;
