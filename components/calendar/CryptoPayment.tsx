@@ -86,23 +86,55 @@ const CryptoComponent = ({
             const serializedBase64 = await response.json();
             const serializedBuffer = Buffer.from(serializedBase64.transaction, 'base64');
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
-            const {
-                context: { slot: minContextSlot },
-                value: { blockhash, lastValidBlockHeight },
-            } = await config.SOL_CONNECTION.getLatestBlockhashAndContext();
-            const signature = await sendTransaction(
-                transaction, 
-                config.SOL_CONNECTION,
-                {
-                    minContextSlot,
-                    skipPreflight: true,
-                    signers: [],
-                    preflightCommitment: 'processed',
-                   
+            const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
+
+            // Check signature status
+            const signatureStatuses = await config.NO_COMMITMENT_SOL_CONNECTION.getSignatureStatuses([signature]);
+            const isSignatureConfirmed = signatureStatuses.value[0]?.confirmationStatus === 'confirmed';
+
+            console.log('Signature Status:', JSON.stringify(signatureStatuses, null, 2));
+
+            if (!isSignatureConfirmed) {
+                // Subscribe for status updates if not confirmed
+                const statusPromise: StatusPromise = new Promise(async (resolve, reject) => {
+                    const subscriptionId = config.SOL_CONNECTION.onSignature(signature, async (result) => {
+                        console.log('Result', result)
+                        if (result.err) {
+                            // Handle error as needed
+                            console.error('Error confirming transaction:', result.err);
+                            reject(result.err);
+                        } else {
+                            const confirmationStatus = result?.err ? null : true;
+                            if (confirmationStatus) {
+                                // Handle confirmed transaction
+                                console.log('Transaction confirmed:', signature);
+                                resolve(result);
+                            } else {
+                                console.log('Transaction not confirmed yet. Waiting for confirmation...');
+                            }
+                        }
+                    }, 'confirmed');
+
+                    // Add the subscriptionId to the promise so it can be used later
+                    statusPromise.subscriptionId = subscriptionId;
                 });
-            console.log(signature)
-            const confirmedTx = await config.SOL_CONNECTION.confirmTransaction({ blockhash, lastValidBlockHeight, signature }, 'confirmed');
-            console.log(confirmedTx)
+
+                console.log('Subscribed for status updates. Waiting for confirmation or expiry...');
+
+                // Use Promise.race to wait for either the confirmation or expiry signal
+                const raceResult = await Promise.race([
+                    statusPromise,
+                    new Promise(resolve => setTimeout(resolve, 10000)),
+                ]);
+
+                if (raceResult === statusPromise) {
+                    console.log('Transaction confirmed during race. Continuing with the original confirmation logic.');
+                } else {
+                    console.log('Expiry signal received during race. Stopping the confirmation process.');
+                    // Puedes manejar el caso de expiración aquí
+                }
+            }
+
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
             console.error('An error occurred:', error);
@@ -149,8 +181,6 @@ const CryptoComponent = ({
 
 export default CryptoComponent;
 
-const override: CSSProperties = {
-    display: "block",
-    margin: "0 auto",
-    borderColor: "red",
-};
+interface StatusPromise extends Promise<any> {
+    subscriptionId?: number;
+}
