@@ -87,6 +87,7 @@ const CryptoComponent = ({
             const serializedBuffer = Buffer.from(serializedBase64.transaction, 'base64');
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
             const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
+            console.log(signature)
             const latestBlockhash = await config.SOL_CONNECTION.getLatestBlockhash();
             
             // Check signature status
