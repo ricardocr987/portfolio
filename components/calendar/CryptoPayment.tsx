@@ -134,15 +134,12 @@ const CryptoComponent = ({
             const serializedBase64 = await response.json();
             const serializedBuffer = Buffer.from(serializedBase64.transaction, 'base64');
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
-            const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
-            const { blockhash, lastValidBlockHeight } = await config.SOL_CONNECTION.getLatestBlockhash();
-            await config.SOL_CONNECTION.confirmTransaction(
-                {
-                    blockhash,
-                    lastValidBlockHeight,
-                    signature,
-                }
-            );
+            const {
+                context: { slot: minContextSlot },
+                value: { blockhash, lastValidBlockHeight },
+            } = await config.SOL_CONNECTION.getLatestBlockhashAndContext();
+            const signature = await sendTransaction(transaction, config.SOL_CONNECTION, { minContextSlot });
+            await config.SOL_CONNECTION.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
 
             toast.success('Payment done. You should have received an email.');
         } catch (error) {
