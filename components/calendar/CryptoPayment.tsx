@@ -88,16 +88,19 @@ const CryptoComponent = ({
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
             const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
 
-            // Subscribe for status updates if not confirmed
             const statusPromise: StatusPromise = new Promise(async (resolve, reject) => {
-                const subscriptionId = config.SOL_CONNECTION.onSignature(signature, async (result) => {
-                    console.log('Result', result)
+                let subscriptionId: number | undefined;
+            
+                subscriptionId = config.SOL_CONNECTION.onSignature(signature, async (result) => {
+                    console.log('Result', result);
+            
                     if (result.err) {
                         // Handle error as needed
                         console.error('Error confirming transaction:', result.err);
                         reject(result.err);
                     } else {
                         const confirmationStatus = result?.err ? null : true;
+            
                         if (confirmationStatus) {
                             // Handle confirmed transaction
                             console.log('Transaction confirmed:', signature);
@@ -107,27 +110,35 @@ const CryptoComponent = ({
                         }
                     }
                 }, 'confirmed');
-
+            
                 // Add the subscriptionId to the promise so it can be used later
                 statusPromise.subscriptionId = subscriptionId;
             });
-
+            
             console.log('Subscribed for status updates. Waiting for confirmation or expiry...');
-
+            
             // Use Promise.race to wait for either the confirmation or expiry signal
             const raceResult = await Promise.race([
                 statusPromise,
-                new Promise(resolve => setTimeout(resolve, 10000)),
+                new Promise(resolve => {
+                    setTimeout(() => {
+                        console.log('Timeout reached. No confirmation received. Rejecting the promise.');
+                        resolve('expiry'); // Resolve with a specific value for the timeout
+                    }, 10000);
+                }),
             ]);
-
-            console.log(raceResult)
-            if (typeof raceResult === 'number') {
-                config.SOL_CONNECTION.removeSignatureListener(raceResult);
+            
+            console.log('Race result:', raceResult);
+            
+            if (raceResult === 'expiry') {
+                console.log('Expiry signal received during race. Stopping the confirmation process.');
+            } else if (statusPromise.subscriptionId) {
+                config.SOL_CONNECTION.removeSignatureListener(statusPromise.subscriptionId);
                 console.log('Transaction confirmed during race. Continuing with the original confirmation logic.');
             } else {
-                console.log('Expiry signal received during race. Stopping the confirmation process.');
-            }
-
+                console.error('Error: subscriptionId is undefined.');
+            }            
+            
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
             console.error('An error occurred:', error);
