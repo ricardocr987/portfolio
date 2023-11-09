@@ -89,10 +89,40 @@ const CryptoComponent = ({
             const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
             const latestBlockhash = await config.SOL_CONNECTION.getLatestBlockhash();
             
+            // Check signature status
+            const signatureStatuses = await config.SOL_CONNECTION.getSignatureStatuses([signature]);
+            const isSignatureConfirmed = signatureStatuses.value[0]?.confirmationStatus === 'confirmed';
+            
+            if (!isSignatureConfirmed) {
+                // Subscribe for status updates if not confirmed
+                const subscription = config.SOL_CONNECTION.onSignature(signature, (result) => {
+                    if (result.err) {
+                    console.error('Error confirming transaction:', result.err);
+                    // Handle error as needed
+                    } else {
+                    // Handle confirmed transaction
+                    console.log('Transaction confirmed:', signature);
+                    }
+                });
+                
+                // Race the expiry strategy and the confirmation strategy
+                
+                // Use Promise.race to wait for either the confirmation or expiry signal
+                const raceResult = await Promise.race([
+                    subscription,
+                    new Promise((resolve) => setTimeout(resolve, 1000)),
+                ]);
+                
+                // Unsubscribe after either confirmation or expiry
+                config.SOL_CONNECTION.removeSignatureListener(subscription);
+            }
+            
+            // Continue with the original confirmation logic
             const result = await config.SOL_CONNECTION.confirmTransaction({
                 ...latestBlockhash,
                 signature,
             }, 'confirmed');
+            
             console.log(result)
 
             toast.success('Payment confirmed. You should have received a mail.');
