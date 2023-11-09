@@ -86,21 +86,23 @@ const CryptoComponent = ({
             const serializedBase64 = await response.json();
             const serializedBuffer = Buffer.from(serializedBase64.transaction, 'base64');
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
-            const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
+            const {
+                context: { slot: minContextSlot },
+                value: { blockhash, lastValidBlockHeight },
+            } = await config.SOL_CONNECTION.getLatestBlockhashAndContext();
+            const signature = await sendTransaction(
+                transaction, 
+                config.SOL_CONNECTION,
+                {
+                    minContextSlot,
+                    skipPreflight: true,
+                    signers: [],
+                    preflightCommitment: 'processed',
+                   
+                });
             console.log(signature)
-            
-            // Check signature status
-            //const signatureStatuses = await config.NO_COMMITMENT_SOL_CONNECTION.getSignatureStatuses([signature]);
-            //const isSignatureConfirmed = signatureStatuses.value[0]?.confirmationStatus === 'confirmed';
-
-            const latestBlockhash = await config.SOL_CONNECTION.getLatestBlockhash('confirmed');
-            // Check if the transaction is confirmed using confirmTransaction
-            const result = await config.SOL_CONNECTION.confirmTransaction({
-                ...latestBlockhash,
-                signature,
-            }, 'confirmed');
-            console.log(result)
-
+            const confirmtx = await config.SOL_CONNECTION.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
+            console.log(confirmtx)
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
             console.error('An error occurred:', error);
