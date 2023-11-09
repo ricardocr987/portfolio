@@ -140,8 +140,19 @@ const CryptoComponent = ({
                 maxRetries: 5,
                 minContextSlot: 0,
             };
-            await sendTransaction(transaction, config.SOL_CONNECTION, sendOptions);
-            
+            const signature = await sendTransaction(transaction, config.SOL_CONNECTION, sendOptions);
+            const blockhash = await config.SOL_CONNECTION.getLatestBlockhash(
+                'finalized'
+            );
+            await config.SOL_CONNECTION.confirmTransaction(
+                {
+                    blockhash: blockhash.blockhash,
+                    lastValidBlockHeight: blockhash.lastValidBlockHeight,
+                    signature,
+                },
+                'confirmed'
+            );
+
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
             console.error('An error occurred:', error);
