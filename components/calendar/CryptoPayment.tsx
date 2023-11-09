@@ -1,4 +1,4 @@
-import { VersionedTransaction, sendAndConfirmTransaction } from "@solana/web3.js";
+import { SendOptions, VersionedTransaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import { DateProps, TokenInfo } from "@/app/meeting/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { CSSProperties, Dispatch, SetStateAction, useState } from "react";
@@ -134,15 +134,13 @@ const CryptoComponent = ({
             const serializedBase64 = await response.json();
             const serializedBuffer = Buffer.from(serializedBase64.transaction, 'base64');
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
-            const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
-
-            const latestBlockHash = await config.SOL_CONNECTION.getLatestBlockhash();
-
-            await config.SOL_CONNECTION.confirmTransaction({
-                blockhash: latestBlockHash.blockhash,
-                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                signature: signature,
-            });  
+            const sendOptions: SendOptions = {
+                skipPreflight: false,
+                preflightCommitment: 'confirmed',
+                maxRetries: 5,
+                minContextSlot: 0,
+            };
+            await sendTransaction(transaction, config.SOL_CONNECTION, sendOptions);
             
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
