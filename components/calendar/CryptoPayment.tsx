@@ -144,14 +144,15 @@ const CryptoComponent = ({
             const blockhash = await config.SOL_CONNECTION.getLatestBlockhash(
                 'finalized'
             );
-            await config.SOL_CONNECTION.confirmTransaction(
+            const confirmResponse = await config.SOL_CONNECTION.confirmTransaction(
                 {
                     blockhash: blockhash.blockhash,
                     lastValidBlockHeight: blockhash.lastValidBlockHeight,
                     signature,
                 },
-                'confirmed'
+                'finalized'
             );
+            console.log(confirmResponse)
 
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
