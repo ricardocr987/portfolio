@@ -1,4 +1,4 @@
-import { VersionedTransaction } from "@solana/web3.js";
+import { VersionedTransaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import { DateProps, TokenInfo } from "@/app/meeting/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { CSSProperties, Dispatch, SetStateAction, useState } from "react";
@@ -26,7 +26,7 @@ const CryptoComponent = ({
     customerEmail, 
     message
 }: CryptoComponentProps) => {
-    const { wallets, select, connect, sendTransaction, publicKey } = useWallet();
+    const { wallets, select, connect, sendTransaction, publicKey, signTransaction } = useWallet();
 
     const connectWallet = async () => {
         select(wallets[0].adapter.name);
@@ -86,9 +86,9 @@ const CryptoComponent = ({
             const serializedBase64 = await response.json();
             const serializedBuffer = Buffer.from(serializedBase64.transaction, 'base64');
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
-            await sendTransaction(transaction, config.SOL_CONNECTION);
-            /*console.log(signature)
-            const latestBlockhash = await config.SOL_CONNECTION.getLatestBlockhash();
+            const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
+            console.log(signature)
+            const blockhash = await config.SOL_CONNECTION.getLatestBlockhash('finalized');
             
             // Check signature status
             const signatureStatuses = await config.NO_COMMITMENT_SOL_CONNECTION.getSignatureStatuses([signature]);
@@ -131,11 +131,12 @@ const CryptoComponent = ({
 
             // Continue with the original confirmation logic
             const result = await config.SOL_CONNECTION.confirmTransaction({
-                ...latestBlockhash,
+                blockhash: blockhash.blockhash,
+                lastValidBlockHeight: blockhash.lastValidBlockHeight,
                 signature,
-            }, 'confirmed');
+            }, 'confirmed')
 
-            console.log('Confirmation result:', result);*/
+            console.log('Confirmation result:', result);
 
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
