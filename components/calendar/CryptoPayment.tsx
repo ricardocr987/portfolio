@@ -88,7 +88,7 @@ const CryptoComponent = ({
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
             const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
             console.log(signature)
-            const blockhash = await config.SOL_CONNECTION.getLatestBlockhash('finalized');
+            //const blockhash = await config.SOL_CONNECTION.getLatestBlockhash('finalized');
             
             // Check signature status
             const signatureStatuses = await config.NO_COMMITMENT_SOL_CONNECTION.getSignatureStatuses([signature]);
@@ -99,6 +99,7 @@ const CryptoComponent = ({
             if (!isSignatureConfirmed) {
                 // Subscribe for status updates if not confirmed
                 const subscription = config.SOL_CONNECTION.onSignature(signature, (result) => {
+                    console.log(result)
                     if (result.err) {
                         console.error('Error confirming transaction:', result.err);
                         // Handle error as needed
@@ -114,7 +115,7 @@ const CryptoComponent = ({
                 // Use Promise.race to wait for either the confirmation or expiry signal
                 const raceResult = await Promise.race([
                     subscription,
-                    new Promise((resolve) => setTimeout(resolve, 5000)),
+                    new Promise((resolve) => setTimeout(resolve, 10000)),
                 ]);
 
                 // Unsubscribe after either confirmation or expiry
