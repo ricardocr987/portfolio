@@ -1,7 +1,7 @@
-import { ConfirmOptions, Connection, PublicKey } from "@solana/web3.js";
+import { Connection, ConnectionConfig, PublicKey } from "@solana/web3.js";
 import { TokenInfo } from "../app/meeting/types";
 
-export const confirmOptions: ConfirmOptions = { commitment: "confirmed" };
+export const confirmOptions: ConnectionConfig = { commitment: "confirmed", wsEndpoint: 'ws://api.mainnet-beta.solana.com' };
 export const connection = new Connection(process.env.NEXT_PUBLIC_RPC || "https://api.mainnet-beta.solana.com");
 
 export const BRICK_PROGRAM_ID = 'BrickarF2QeREBZsapbhgYPHJi5FYkJVnx7mZhxETCt5'
