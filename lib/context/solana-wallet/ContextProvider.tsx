@@ -4,10 +4,11 @@ import { WalletAdapterNetwork, WalletError } from '@solana/wallet-adapter-base';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
+import config from '@/lib/env';
 
 export const SolanaContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const network = WalletAdapterNetwork.Mainnet;
-    const endpoint = useMemo(() => clusterApiUrl(network), []);
+    const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
     const wallets = useMemo(
         () => [
@@ -25,7 +26,7 @@ export const SolanaContextProvider: FC<{ children: ReactNode }> = ({ children })
     );
 
     return (
-        <ConnectionProvider endpoint={endpoint}>
+        <ConnectionProvider endpoint={config.SOL_ENDPOINT}>
             <WalletProvider wallets={wallets} onError={onError}>
                 {children}
             </WalletProvider>
