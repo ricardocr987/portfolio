@@ -106,12 +106,11 @@ const CryptoComponent = ({
                         // Handle confirmed transaction
                         console.log('Transaction confirmed:', signature);
                     }
-                });
+                }, 'confirmed');
 
                 console.log('Subscribed for status updates. Waiting for confirmation or expiry...');
 
                 // Race the expiry strategy and the confirmation strategy
-
                 // Use Promise.race to wait for either the confirmation or expiry signal
                 const raceResult = await Promise.race([
                     subscription,
@@ -128,15 +127,6 @@ const CryptoComponent = ({
                     // You may want to handle the expiry case here
                 }
             }
-
-            // Continue with the original confirmation logic
-            const result = await config.SOL_CONNECTION.confirmTransaction({
-                blockhash: blockhash.blockhash,
-                lastValidBlockHeight: blockhash.lastValidBlockHeight,
-                signature,
-            }, 'confirmed')
-
-            console.log('Confirmation result:', result);
 
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
