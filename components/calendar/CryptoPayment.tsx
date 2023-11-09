@@ -92,38 +92,49 @@ const CryptoComponent = ({
             // Check signature status
             const signatureStatuses = await config.SOL_CONNECTION.getSignatureStatuses([signature]);
             const isSignatureConfirmed = signatureStatuses.value[0]?.confirmationStatus === 'confirmed';
-            
+
+            console.log('Signature Status:', signatureStatuses.value[0]?.confirmationStatus);
+
             if (!isSignatureConfirmed) {
-                // Subscribe for status updates if not confirmed
-                const subscription = config.SOL_CONNECTION.onSignature(signature, (result) => {
-                    if (result.err) {
+            // Subscribe for status updates if not confirmed
+            const subscription = config.SOL_CONNECTION.onSignature(signature, (result) => {
+                if (result.err) {
                     console.error('Error confirming transaction:', result.err);
                     // Handle error as needed
-                    } else {
+                } else {
                     // Handle confirmed transaction
                     console.log('Transaction confirmed:', signature);
-                    }
-                });
-                
-                // Race the expiry strategy and the confirmation strategy
-                
-                // Use Promise.race to wait for either the confirmation or expiry signal
-                const raceResult = await Promise.race([
-                    subscription,
-                    new Promise((resolve) => setTimeout(resolve, 1000)),
-                ]);
-                
-                // Unsubscribe after either confirmation or expiry
-                config.SOL_CONNECTION.removeSignatureListener(subscription);
+                }
+            });
+
+            console.log('Subscribed for status updates. Waiting for confirmation or expiry...');
+
+            // Race the expiry strategy and the confirmation strategy
+
+            // Use Promise.race to wait for either the confirmation or expiry signal
+            const raceResult = await Promise.race([
+                subscription,
+                new Promise((resolve) => setTimeout(resolve, 1000)),
+            ]);
+
+            // Unsubscribe after either confirmation or expiry
+            config.SOL_CONNECTION.removeSignatureListener(subscription);
+
+            if (raceResult === subscription) {
+                console.log('Transaction confirmed during race. Continuing with the original confirmation logic.');
+            } else {
+                console.log('Expiry signal received during race. Stopping the confirmation process.');
+                // You may want to handle the expiry case here
             }
-            
+            }
+
             // Continue with the original confirmation logic
             const result = await config.SOL_CONNECTION.confirmTransaction({
                 ...latestBlockhash,
                 signature,
             }, 'confirmed');
-            
-            console.log(result)
+
+            console.log('Confirmation result:', result);
 
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
