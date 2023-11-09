@@ -93,7 +93,7 @@ const CryptoComponent = ({
             const signatureStatuses = await config.SOL_CONNECTION.getSignatureStatuses([signature]);
             const isSignatureConfirmed = signatureStatuses.value[0]?.confirmationStatus === 'confirmed';
 
-            console.log('Signature Status:', signatureStatuses.value[0]?.confirmationStatus);
+            console.log('Signature Status:', JSON.stringify(signatureStatuses, null, 2));
 
             if (!isSignatureConfirmed) {
             // Subscribe for status updates if not confirmed
