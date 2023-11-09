@@ -140,16 +140,7 @@ const CryptoComponent = ({
                 maxRetries: 5,
                 minContextSlot: 0,
             };
-            const sig = await sendTransaction(transaction, config.SOL_CONNECTION, sendOptions);
-            const blockhash = await config.SOL_CONNECTION.getLatestBlockhash('finalized');
-            await config.SOL_CONNECTION.confirmTransaction(
-                {
-                    blockhash: blockhash.blockhash,
-                    lastValidBlockHeight: blockhash.lastValidBlockHeight,
-                    signature: sig,
-                },
-                'confirmed'
-            );
+            await sendTransaction(transaction, config.SOL_CONNECTION, sendOptions);
 
             toast.success('Payment done. You should have received an email.');
         } catch (error) {
