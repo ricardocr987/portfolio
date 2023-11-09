@@ -101,8 +101,8 @@ const CryptoComponent = ({
                    
                 });
             console.log(signature)
-            const confirmtx = await config.SOL_CONNECTION.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
-            console.log(confirmtx)
+            const confirmedTx = await config.SOL_CONNECTION.confirmTransaction({ blockhash, lastValidBlockHeight, signature }, 'confirmed');
+            console.log(confirmedTx)
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
             console.error('An error occurred:', error);
