@@ -17,6 +17,10 @@ type CryptoComponentProps = {
     message: string
 };
 
+interface StatusPromise extends Promise<any> {
+    subscriptionId?: number;
+}
+
 const CryptoComponent = ({
     selectedToken,
     setSelectedToken,
@@ -26,12 +30,56 @@ const CryptoComponent = ({
     customerEmail, 
     message
 }: CryptoComponentProps) => {
-    const { wallets, select, connect, sendTransaction, publicKey, signTransaction } = useWallet();
+    const { wallets, select, connect, sendTransaction, publicKey } = useWallet();
 
     const connectWallet = async () => {
         select(wallets[0].adapter.name);
         connect();
     }
+
+    const awaitConfirmation = async (signature: string): Promise<StatusPromise> => {
+        const statusPromise: StatusPromise = new Promise(async (resolve, reject) => {
+            config.SOL_CONNECTION.onSignature(signature, async (result) => {
+                console.log('Result', result);
+
+                if (result.err) {
+                    console.error('Error confirming transaction:', result.err);
+                    reject(result.err);
+                } else {
+                    const confirmationStatus = result?.err ? null : true;
+
+                    if (confirmationStatus) {
+                        console.log('Transaction confirmed:', signature);
+                        resolve(result);
+                    }
+                }
+            }, 'confirmed');
+        });
+
+        console.log('Subscribed for status updates. Waiting for confirmation or expiry...');
+            
+        // Use Promise.race to wait for either the confirmation or expiry signal
+        const raceResult = await Promise.race([
+            statusPromise,
+            new Promise(resolve => {
+                setTimeout(() => {
+                    console.log('Timeout reached. No confirmation received. Rejecting the promise.');
+                    resolve('expiry'); // Resolve with a specific value for the timeout
+                }, 10000);
+            }),
+        ]);
+        
+        console.log('Race result:', raceResult);
+        
+        if (raceResult === 'expiry') {
+            console.log('Expiry signal received during race. Stopping the confirmation process.');
+        } else if (statusPromise.subscriptionId) {
+            config.SOL_CONNECTION.removeSignatureListener(statusPromise.subscriptionId);
+            console.log('Transaction confirmed during race. Continuing with the original confirmation logic.');
+        } else {
+            console.error('Error: subscriptionId is undefined.');
+        }
+    };
 
     const handlePayment = async () => {
         if (date.hours.length === 0) {
@@ -88,56 +136,13 @@ const CryptoComponent = ({
             const transaction = VersionedTransaction.deserialize(serializedBuffer);
             const signature = await sendTransaction(transaction, config.SOL_CONNECTION);
 
-            const statusPromise: StatusPromise = new Promise(async (resolve, reject) => {
-                let subscriptionId: number | undefined;
-            
-                subscriptionId = config.SOL_CONNECTION.onSignature(signature, async (result) => {
-                    console.log('Result', result);
-            
-                    if (result.err) {
-                        // Handle error as needed
-                        console.error('Error confirming transaction:', result.err);
-                        reject(result.err);
-                    } else {
-                        const confirmationStatus = result?.err ? null : true;
-            
-                        if (confirmationStatus) {
-                            // Handle confirmed transaction
-                            console.log('Transaction confirmed:', signature);
-                            resolve(result);
-                        } else {
-                            console.log('Transaction not confirmed yet. Waiting for confirmation...');
-                        }
-                    }
-                }, 'confirmed');
-            
-                // Add the subscriptionId to the promise so it can be used later
-                statusPromise.subscriptionId = subscriptionId;
-            });
-            
-            console.log('Subscribed for status updates. Waiting for confirmation or expiry...');
-            
-            // Use Promise.race to wait for either the confirmation or expiry signal
-            const raceResult = await Promise.race([
-                statusPromise,
-                new Promise(resolve => {
-                    setTimeout(() => {
-                        console.log('Timeout reached. No confirmation received. Rejecting the promise.');
-                        resolve('expiry'); // Resolve with a specific value for the timeout
-                    }, 10000);
-                }),
-            ]);
-            
-            console.log('Race result:', raceResult);
-            
-            if (raceResult === 'expiry') {
-                console.log('Expiry signal received during race. Stopping the confirmation process.');
-            } else if (statusPromise.subscriptionId) {
-                config.SOL_CONNECTION.removeSignatureListener(statusPromise.subscriptionId);
-                console.log('Transaction confirmed during race. Continuing with the original confirmation logic.');
-            } else {
-                console.error('Error: subscriptionId is undefined.');
-            }            
+            const latestBlockHash = await config.SOL_CONNECTION.getLatestBlockhash();
+
+            await config.SOL_CONNECTION.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signature,
+            });  
             
             toast.success('Payment confirmed. You should have received a mail.');
         } catch (error) {
@@ -162,13 +167,13 @@ const CryptoComponent = ({
                     hours={date.hours.length}
                 />
                 {publicKey ? 
-                        <button
-                            type="submit"
-                            className="cursor-pointer border-gray-800 border bg-orange-500 hover-bg-orange-400 rounded-md w-full"
-                            onClick={handlePayment}
-                        >
-                            Pay
-                        </button>
+                    <button
+                        type="submit"
+                        className="cursor-pointer border-gray-800 border bg-orange-500 hover-bg-orange-400 rounded-md w-full"
+                        onClick={handlePayment}
+                    >
+                        Pay
+                    </button>
                 :
                     <button
                         type="submit"
@@ -184,7 +189,3 @@ const CryptoComponent = ({
 };
 
 export default CryptoComponent;
-
-interface StatusPromise extends Promise<any> {
-    subscriptionId?: number;
-}
